@@ -12,14 +12,13 @@ import pandas as pd
 import numpy as np
 
 
-# Helper function tái hiện logic nghiệp vụ chuẩn
-def check_overlap_month(tu_ngay: date, den_ngay: date, trang_thai: int, m_start: date, m_next_start: date) -> bool:
-    """Xác định thẻ có hiệu lực giao với tháng xét hay không."""
-    if trang_thai != 1:
-        return False
-    if tu_ngay > den_ngay:
-        return False
-    return (tu_ngay < m_next_start) and (den_ngay >= m_start)
+# Import trực tiếp hàm nghiệp vụ chuẩn từ module sản xuất (B1c)
+from src.pipelines.gold_logic import (
+    check_card_active_in_month as check_overlap_month,
+    evaluate_person_participation,
+    clean_khoi_code,
+    resolve_khoi_priority,
+)
 
 
 def evaluate_person_status(cards: list,
@@ -28,46 +27,26 @@ def evaluate_person_status(cards: list,
                            chk_start=date(2026, 8, 1),
                            chk_next=date(2026, 9, 1),
                            stop_def="any"):
-    """
-    Đánh giá trạng thái 1 người dựa trên danh sách thẻ:
-    - Có tham gia HSSV mốc gốc?
-    - Có tham gia mốc kiểm tra?
-    - Thuộc diện dừng tham gia?
-    """
-    has_base_hssv = False
-    has_chk_any = False
-    has_chk_hssv = False
-
-    for c in cards:
-        tu = c["TU_NGAY"]
-        den = c["DEN_NGAY"]
-        st = c.get("TRANG_THAI", 1)
-        kh = str(c.get("MA_KHOI", "")).strip().upper()
-
-        # Kiểm tra giao tháng gốc
-        if check_overlap_month(tu, den, st, base_start, base_next):
-            if kh in ("HS", "SV"):
-                has_base_hssv = True
-
-        # Kiểm tra giao tháng kiểm tra
-        if check_overlap_month(tu, den, st, chk_start, chk_next):
-            has_chk_any = True
-            if kh in ("HS", "SV"):
-                has_chk_hssv = True
-
-    if not has_base_hssv:
-        is_stopped = False
-    else:
-        if stop_def == "any":
-            is_stopped = not has_chk_any
-        else:
-            is_stopped = not has_chk_hssv
-
+    """Wrapper gọi trực tiếp hàm sản xuất evaluate_person_participation."""
+    is_stopped, ma_khoi_goc, best_card = evaluate_person_participation(
+        cards, base_start, base_next, chk_start, chk_next, stop_def
+    )
+    has_base_hssv = (ma_khoi_goc in ("HS", "SV"))
+    has_chk_any = any(
+        check_overlap_month(c["TU_NGAY"], c["DEN_NGAY"], int(c.get("TRANG_THAI", 1)), chk_start, chk_next)
+        for c in cards
+    )
+    has_chk_hssv = any(
+        check_overlap_month(c["TU_NGAY"], c["DEN_NGAY"], int(c.get("TRANG_THAI", 1)), chk_start, chk_next)
+        and clean_khoi_code(c.get("MA_KHOI")) in ("HS", "SV")
+        for c in cards
+    )
     return {
         "has_base_hssv": has_base_hssv,
         "has_chk_any": has_chk_any,
         "has_chk_hssv": has_chk_hssv,
-        "is_stopped": is_stopped
+        "is_stopped": is_stopped,
+        "ma_khoi_goc": ma_khoi_goc,
     }
 
 
