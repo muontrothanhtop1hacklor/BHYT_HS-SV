@@ -1,4 +1,4 @@
-# DỰ ÁN XỬ LÝ DỮ LIỆU BHYT 200 TRIỆU DÒNG (CV 835/QLT - Ý 1)
+# DỰ ÁN XỬ LÝ DỮ LIỆU BHYT 200 TRIỆU DÒNG (CV 835/QLT )
 
 Dự án mô phỏng và xử lý bài toán lọc danh sách Học sinh, Sinh viên (HSSV) tham gia BHYT từ tháng 10/2024 nhưng đến nay (tháng 08/2026) đã dừng tham gia và chưa tham gia lại.
 Dữ liệu quy mô **200 triệu dòng thẻ** (~20 triệu đối tượng), kiến trúc **Medallion (Bronze -> Silver -> Gold)**, tối ưu hiệu năng chạy trên phần cứng máy cá nhân thông thường.
