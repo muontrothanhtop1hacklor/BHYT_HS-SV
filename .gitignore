@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+venv/
+.venv/
+.pytest_cache/
+
+# Large Datasets & Binary Data (Exclude from Git)
+data/
+*.parquet
+*.parquet.tmp
+*.tmp
+*.duckdb
+*.duckdb.wal
+
+# IDE & OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
