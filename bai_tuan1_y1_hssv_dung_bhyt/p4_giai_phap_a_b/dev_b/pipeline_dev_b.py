@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p4_giai_phap_a_b/dev_b
 """
 Pipeline xử lý của BẠN B:
 Giải quyết bài toán Ý 1 (CV 835/QLT) - Lọc HSSV dừng tham gia BHYT.
@@ -19,8 +20,8 @@ import pyarrow.compute as pc
 import pyarrow as pa
 import pandas as pd
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.config import (
+sys.path.append(str(Path(__file__).resolve().parents[3]))
+from common.config import (
     ST_INTHE_DTL_DIR, DM_BHXH_DIR, OUTPUT_DEV_B_DIR,
     NGAY_DAU_THANG_GOC, NGAY_DAU_THANG_SAU_GOC,
     NGAY_DAU_THANG_KIEM_TRA, NGAY_DAU_THANG_SAU_KIEM_TRA,
