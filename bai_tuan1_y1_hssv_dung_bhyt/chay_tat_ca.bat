@@ -1,11 +1,11 @@
 @echo off
 chcp 65001 >nul
 echo ===================================================================
-echo CHẠY TOÀN BỘ WORKFLOW DÙNG CHUNG DỮ LIỆU SCRIPT 1
+echo CHẠY TOÀN BỘ WORKFLOW BÀI TUẦN 1 Ý 1 (CV 835/QLT)
 echo ===================================================================
 echo.
-echo [1/4] Sinh dữ liệu theo Script 1...
-python scripts/gen_bhyt_script1.py --persons 200000 --chunk 100000 --seed 42 --out data/bhyt_data
+echo [1/4] Sinh dữ liệu theo Script 1 (H1-H10)...
+python common/data_gen/gen_bhyt_script1.py --persons 200000 --chunk 100000 --seed 42 --out data/bhyt_data
 if %ERRORLEVEL% NEQ 0 (
     echo [LỖI] Sinh dữ liệu thất bại!
     pause
@@ -14,7 +14,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo [2/4] Chạy Pipeline Bạn A...
-python -c "from src.pipelines.pipeline_dev_a import run_pipeline_dev_a; run_pipeline_dev_a()"
+python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_a.pipeline_dev_a
 if %ERRORLEVEL% NEQ 0 (
     echo [LỖI] Pipeline Bạn A thất bại!
     pause
@@ -23,7 +23,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo [3/4] Chạy Pipeline Bạn B...
-python -c "from src.pipelines.pipeline_dev_b import run_pipeline_dev_b; run_pipeline_dev_b()"
+python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_b.pipeline_dev_b
 if %ERRORLEVEL% NEQ 0 (
     echo [LỖI] Pipeline Bạn B thất bại!
     pause
@@ -32,9 +32,9 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo [4/4] Đối soát độc lập giữa Bạn A, Bạn B và Kịch bản kỳ vọng SCENARIO...
-python -c "from src.reconciliation.compare_results import reconcile; reconcile()"
+python -m bai_tuan1_y1_hssv_dung_bhyt.p5_doi_soat.compare_results
 echo.
 echo ===================================================================
-echo HOÀN TẤT KIỂM THỬ DÙNG CHUNG DỮ LIỆU SCRIPT 1
+echo HOÀN TẤT TOÀN BỘ WORKFLOW BÀI TUẦN 1 Ý 1
 echo ===================================================================
 pause
