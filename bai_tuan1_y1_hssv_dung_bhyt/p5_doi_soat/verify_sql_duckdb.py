@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p5_doi_soat
 # -*- coding: utf-8 -*-
 """
 scripts/verify_sql_duckdb.py

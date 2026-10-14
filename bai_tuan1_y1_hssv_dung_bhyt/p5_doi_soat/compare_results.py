@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p5_doi_soat
 """
 Script đối chiếu kết quả giữa Bạn A và Bạn B.
 Kiểm tra so khớp 100%:
@@ -17,8 +18,8 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.config import OUTPUT_DEV_A_DIR, OUTPUT_DEV_B_DIR, RECONCILIATION_DIR
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from common.config import OUTPUT_DEV_A_DIR, OUTPUT_DEV_B_DIR, RECONCILIATION_DIR
 
 def reconcile():
     RECONCILIATION_DIR.mkdir(parents=True, exist_ok=True)
@@ -53,7 +54,7 @@ def reconcile():
     sv_b = (df_b["MA_KHOI_GOC"] == "SV").sum()
     
     # 3. Đối chiếu với SCENARIO hoặc Ground Truth nếu có
-    from src.config import SCENARIO_DIR
+    from common.config import SCENARIO_DIR
     scen_info = ""
     scen_files = list(SCENARIO_DIR.glob("part*.parquet")) if SCENARIO_DIR.exists() else []
     if scen_files:
