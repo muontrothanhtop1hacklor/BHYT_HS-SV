@@ -1,10 +1,11 @@
+# Bài: tuan1_y1 | Phần: p3_gold
 """
 tests/test_edge_cases.py - Bộ kiểm thử biên (Edge Cases Test Suite)
 Kiểm chứng xác nhận logic 'có tham gia tại tháng M' và 'HSSV dừng tham gia BHYT' (CV 835/QLT).
 
 Bao gồm:
 - 5 ca cơ bản của đề bài (giao tháng 10/2024).
-- 20 ca bổ sung: thẻ hủy, đa thẻ, chuyển khối, gián đoạn, ngày biên, xử lý dữ liệu bẩn.
+- 15 ca bổ sung: thẻ hủy, đa thẻ, chuyển khối, gián đoạn, ngày biên (tổng cộng 20 ca logic).
 """
 import pytest
 from datetime import date
@@ -13,12 +14,20 @@ import numpy as np
 
 
 # Import trực tiếp hàm nghiệp vụ chuẩn từ module sản xuất (B1c)
-from src.pipelines.gold_logic import (
-    check_card_active_in_month as check_overlap_month,
-    evaluate_person_participation,
-    clean_khoi_code,
-    resolve_khoi_priority,
-)
+try:
+    from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import (
+        check_card_active_in_month as check_overlap_month,
+        evaluate_person_participation,
+        clean_khoi_code,
+        resolve_khoi_priority,
+    )
+except ImportError:
+    from src.pipelines.gold_logic import (
+        check_card_active_in_month as check_overlap_month,
+        evaluate_person_participation,
+        clean_khoi_code,
+        resolve_khoi_priority,
+    )
 
 
 def evaluate_person_status(cards: list,

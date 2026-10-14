@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p3_gold
 # -*- coding: utf-8 -*-
 """
 src/pipelines/gold_logic.py

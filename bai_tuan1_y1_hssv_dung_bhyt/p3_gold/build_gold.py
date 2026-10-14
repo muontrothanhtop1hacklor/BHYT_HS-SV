@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p3_gold
 # -*- coding: utf-8 -*-
 """
 scripts/build_gold.py
@@ -32,7 +33,7 @@ import os
 import sys
 
 # Đảm bảo import được module từ thư mục gốc
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 # Đảm bảo UTF-8
 if sys.platform == "win32":
@@ -41,7 +42,10 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-from src.utils.resource_monitor import ProcessTreeMemoryMonitor
+try:
+    from bai_ram_1_10_100m.resource_monitor import ProcessTreeMemoryMonitor
+except ImportError:
+    from src.utils.resource_monitor import ProcessTreeMemoryMonitor
 
 
 def get_file_sha256(filepath: str) -> str:
