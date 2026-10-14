@@ -12,14 +12,24 @@ DATA_DIR = PROJECT_ROOT / "data"
 BHYT_DATA_DIR = DATA_DIR / "bhyt_data"
 SOURCE_DIR = DATA_DIR / "source"
 
-if (BHYT_DATA_DIR / "st_inthe_dtl").exists():
+if (BHYT_DATA_DIR / "ST_INTHE_DTL").exists():
+    ST_INTHE_DTL_DIR = BHYT_DATA_DIR / "ST_INTHE_DTL"
+elif (BHYT_DATA_DIR / "st_inthe_dtl").exists():
     ST_INTHE_DTL_DIR = BHYT_DATA_DIR / "st_inthe_dtl"
-    DM_BHXH_FILE = BHYT_DATA_DIR / "dm_bhxh.parquet"
 else:
     ST_INTHE_DTL_DIR = SOURCE_DIR / "st_inthe_dtl"
+
+if (BHYT_DATA_DIR / "DM_BHXH.parquet").exists():
+    DM_BHXH_FILE = BHYT_DATA_DIR / "DM_BHXH.parquet"
+elif (BHYT_DATA_DIR / "dm_bhxh.parquet").exists():
+    DM_BHXH_FILE = BHYT_DATA_DIR / "dm_bhxh.parquet"
+elif (BHYT_DATA_DIR / "DM_BHXH.csv").exists():
+    DM_BHXH_FILE = BHYT_DATA_DIR / "DM_BHXH.csv"
+else:
     DM_BHXH_FILE = SOURCE_DIR / "dm_bhxh" / "dm_bhxh.parquet"
 
-DM_BHXH_DIR = BHYT_DATA_DIR if (BHYT_DATA_DIR / "dm_bhxh.parquet").exists() else (SOURCE_DIR / "dm_bhxh")
+DM_BHXH_DIR = BHYT_DATA_DIR if (BHYT_DATA_DIR / "DM_BHXH.csv").exists() or (BHYT_DATA_DIR / "dm_bhxh.parquet").exists() or (BHYT_DATA_DIR / "DM_BHXH.parquet").exists() else (SOURCE_DIR / "dm_bhxh")
+SCENARIO_DIR = BHYT_DATA_DIR / "SCENARIO"
 
 OUTPUT_DIR = DATA_DIR / "output"
 OUTPUT_DEV_A_DIR = OUTPUT_DIR / "dev_a"

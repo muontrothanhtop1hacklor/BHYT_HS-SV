@@ -51,14 +51,25 @@ def process_parquet_chunk(fpath):
     Xử lý 1 chunk Parquet thẻ BHYT:
     Do mỗi chunk chứa trọn vẹn toàn bộ thẻ của từng cá nhân (person-chunk invariant),
     việc kiểm tra điều kiện tham gia mốc gốc và mốc kiểm tra được đóng gói hoàn toàn trong chunk.
+    Hỗ trợ linh hoạt cả schema 13 cột (Script 1) lẫn 30 cột (Script 2).
     """
-    t = pq.read_table(fpath, columns=COLS)
+    schema = pq.read_schema(fpath)
+    avail_cols = [c for c in COLS if c in schema.names]
+    t = pq.read_table(fpath, columns=avail_cols)
     n_rows = t.num_rows
     if n_rows == 0:
         return None, 0
 
-    tu = pc.cast(t['TU_NGAY'], pa.int32()).to_numpy(zero_copy_only=False).astype(np.int64)
-    den = pc.cast(t['DEN_NGAY'], pa.int32()).to_numpy(zero_copy_only=False).astype(np.int64)
+    if "MA_TINH" not in t.column_names:
+        # Trích MA_TINH từ 2 ký tự mã tỉnh trong SO_THE_KCB (vị trí 3..5, e.g. HS401... -> 01)
+        ma_tinh_col = pc.utf8_slice_codeunits(t["SO_THE_KCB"], 3, 5)
+        t = t.append_column("MA_TINH", ma_tinh_col)
+
+    # Đảm bảo TU_NGAY, DEN_NGAY luôn cast về date32 trước khi tính epoch days
+    tu_d = t['TU_NGAY'] if t['TU_NGAY'].type == pa.date32() else pc.cast(t['TU_NGAY'], pa.date32())
+    den_d = t['DEN_NGAY'] if t['DEN_NGAY'].type == pa.date32() else pc.cast(t['DEN_NGAY'], pa.date32())
+    tu = pc.cast(tu_d, pa.int32()).to_numpy(zero_copy_only=False).astype(np.int64)
+    den = pc.cast(den_d, pa.int32()).to_numpy(zero_copy_only=False).astype(np.int64)
     status = t['TRANG_THAI'].to_numpy(zero_copy_only=False)
     kh_s = pc.cast(t['MA_KHOI'], pa.string()).to_numpy(zero_copy_only=False)
     so_int = pc.cast(t['SO_SO_BHXH'], pa.int64()).to_numpy(zero_copy_only=False)
@@ -148,15 +159,15 @@ def run_pipeline_dev_a():
 
     detail_cols = {
         "SO_SO_BHXH": pc.cast(full_sub["SO_SO_BHXH"], pa.string()),
-        "HO_TEN": full_sub["HO_TEN"],
-        "NGAY_SINH": full_sub["NGAY_SINH"],
+        "HO_TEN": pc.cast(full_sub["HO_TEN"], pa.string()),
+        "NGAY_SINH": pc.cast(full_sub["NGAY_SINH"], pa.date32()),
         "GIOI_TINH": pc.cast(full_sub["GIOI_TINH"], pa.int16()),
-        "SO_CMND": full_sub["SO_CMND"],
-        "SO_THE_KCB_GOC": full_sub["SO_THE_KCB"],
+        "SO_CMND": pc.cast(full_sub["SO_CMND"], pa.string()),
+        "SO_THE_KCB_GOC": pc.cast(full_sub["SO_THE_KCB"], pa.string()),
         "MA_KHOI_GOC": pc.cast(full_sub["MA_KHOI"], pa.string()),
-        "TU_NGAY_GOC": full_sub["TU_NGAY"],
-        "DEN_NGAY_GOC": full_sub["DEN_NGAY"],
-        "DM_BHXH_ID": full_sub["DM_BHXH_ID"],
+        "TU_NGAY_GOC": pc.cast(full_sub["TU_NGAY"], pa.date32()),
+        "DEN_NGAY_GOC": pc.cast(full_sub["DEN_NGAY"], pa.date32()),
+        "DM_BHXH_ID": pc.cast(full_sub["DM_BHXH_ID"], pa.int32()),
         "MA_TINH": pc.cast(full_sub["MA_TINH"], pa.string()),
         "NGAY_GOC": pa.repeat(goc_date, total_stopped),
         "NGAY_KIEM_TRA": pa.repeat(kiem_tra_date, total_stopped),
@@ -170,11 +181,14 @@ def run_pipeline_dev_a():
     print(f"[OK] Bảng chi tiết: {bc_path} ({os.path.getsize(bc_path)/1024/1024:.2f} MB)")
 
     # 4. Tạo Bảng tổng hợp thống kê: TK_DBHC_HSSV_DUNG_THAM_GIA
-    # Đọc danh mục tỉnh từ dm_bhxh.parquet
     ten_tinh_map = {}
     if Path(DM_BHXH_FILE).exists():
-        dm_tbl = pq.read_table(DM_BHXH_FILE)
-        p_mask = pc.is_null(dm_tbl["MA_CHA"])
+        if str(DM_BHXH_FILE).endswith(".csv"):
+            import pyarrow.csv as pacsv
+            dm_tbl = pacsv.read_csv(DM_BHXH_FILE)
+        else:
+            dm_tbl = pq.read_table(DM_BHXH_FILE)
+        p_mask = pc.or_(pc.is_null(dm_tbl["MA_CHA"]), pc.equal(dm_tbl["MA_CHA"], "00"))
         p_tbl = dm_tbl.filter(p_mask)
         for ma, ten in zip(p_tbl["MA_DVI"].to_pylist(), p_tbl["TEN_DVI"].to_pylist()):
             ten_tinh_map[str(ma).zfill(2)] = ten
@@ -210,7 +224,20 @@ def run_pipeline_dev_a():
     print(f"[OK] Bảng thống kê: {tk_path} ({len(tk_df)} tỉnh/thành phố)")
 
     # 5. Đối chiếu nhanh với đáp án chuẩn nếu có
-    if Path(ANSWER_LIST_FILE).exists():
+    from src.config import SCENARIO_DIR
+    scen_files = list(SCENARIO_DIR.glob("part*.parquet")) if SCENARIO_DIR.exists() else []
+    if scen_files:
+        import duckdb
+        scen_cnt = duckdb.query(f"SELECT count(*) FROM read_parquet('{SCENARIO_DIR}/*.parquet') WHERE KY_VONG_DUNG = true").fetchone()[0]
+        print("-" * 80)
+        print("KIỂM TRA ĐỐI CHIẾU VỚI KỊCH BẢN ĐÁP ÁN (SCENARIO GROUND TRUTH):")
+        print(f"  - Số lượng Bạn A tìm thấy:    {total_stopped:,} người")
+        print(f"  - Số lượng đáp án kỳ vọng:   {scen_cnt:,} người")
+        if total_stopped == scen_cnt:
+            print("  => KẾT QUẢ KHỚP 100% VỚI ĐÁP ÁN KỊCH BẢN!")
+        else:
+            print(f"  => CHÊNH LỆCH: {total_stopped - scen_cnt:,} người")
+    elif Path(ANSWER_LIST_FILE).exists():
         ans_tbl = pq.read_table(ANSWER_LIST_FILE)
         ans_cnt = ans_tbl.num_rows
         print("-" * 80)

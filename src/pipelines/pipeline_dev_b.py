@@ -22,7 +22,9 @@ import pandas as pd
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.config import (
     ST_INTHE_DTL_DIR, DM_BHXH_DIR, OUTPUT_DEV_B_DIR,
-    NGAY_DAU_THANG_GOC, NGAY_DAU_THANG_SAU_GOC, NGAY_KIEM_TRA
+    NGAY_DAU_THANG_GOC, NGAY_DAU_THANG_SAU_GOC,
+    NGAY_DAU_THANG_KIEM_TRA, NGAY_DAU_THANG_SAU_KIEM_TRA,
+    NGAY_KIEM_TRA
 )
 
 def run_pipeline_dev_b():
@@ -30,7 +32,7 @@ def run_pipeline_dev_b():
     start_time = time.time()
     print("=== BẮT ĐẦU CHẠY PIPELINE BẠN B ===")
     
-    parquet_files = list(ST_INTHE_DTL_DIR.glob("part_*.parquet"))
+    parquet_files = list(ST_INTHE_DTL_DIR.glob("part*.parquet"))
     if not parquet_files:
         print(f"[!] Không tìm thấy dữ liệu trong {ST_INTHE_DTL_DIR}")
         return
@@ -52,11 +54,11 @@ def run_pipeline_dev_b():
     df_oct = df_oct.sort_values(by=["DEN_NGAY", "TU_NGAY"], ascending=[False, False])
     df_oct_unique = df_oct.drop_duplicates(subset=["SO_SO_BHXH"], keep="first")
     
-    # 2. Lọc thẻ còn hiệu lực tại ngày kiểm tra
+    # 2. Lọc thẻ còn hiệu lực tại mốc kiểm tra (giao tháng 08/2026 theo CV 835/QLT)
     filt_now = (
         (pc.field("TRANG_THAI") == 1) &
-        (pc.field("TU_NGAY") <= pa.scalar(NGAY_KIEM_TRA, type=pa.date32())) &
-        (pc.field("DEN_NGAY") >= pa.scalar(NGAY_KIEM_TRA, type=pa.date32()))
+        (pc.field("TU_NGAY") < pa.scalar(NGAY_DAU_THANG_SAU_KIEM_TRA, type=pa.date32())) &
+        (pc.field("DEN_NGAY") >= pa.scalar(NGAY_DAU_THANG_KIEM_TRA, type=pa.date32()))
     )
     t_now = dataset.to_table(filter=filt_now, columns=["SO_SO_BHXH"])
     df_now = t_now.to_pandas().drop_duplicates()
@@ -67,15 +69,25 @@ def run_pipeline_dev_b():
     )
     df_stopped = merged[merged["_merge"] == "left_only"].drop(columns=["_merge"]).copy()
     
-    # 4. Gắn mã tỉnh từ danh mục
-    dm_file = DM_BHXH_DIR / "dm_bhxh.parquet"
-    if dm_file.exists():
-        df_dm = pd.read_parquet(dm_file)
-        df_stopped = df_stopped.merge(df_dm[["ID", "MA_CHA"]], left_on="DM_BHXH_ID", right_on="ID", how="left")
-        df_stopped["MA_TINH"] = df_stopped["MA_CHA"].fillna("000")
-        df_stopped.drop(columns=["ID_y", "MA_CHA"], errors="ignore", inplace=True)
+    # 4. Gắn mã tỉnh từ danh mục (hỗ trợ cả CSV và Parquet)
+    dm_file = None
+    for cand in [DM_BHXH_DIR / "DM_BHXH.parquet", DM_BHXH_DIR / "dm_bhxh.parquet",
+                 DM_BHXH_DIR / "DM_BHXH.csv", DM_BHXH_DIR / "dm_bhxh.csv"]:
+        if cand.exists():
+            dm_file = cand
+            break
+            
+    if dm_file is not None:
+        df_dm = pd.read_csv(dm_file) if str(dm_file).endswith('.csv') else pd.read_parquet(dm_file)
+        df_dm['MA_CHA_CLEAN'] = df_dm['MA_CHA'].astype(str).replace({'00': None, '0': None, 'None': None, 'nan': None, '': None})
+        df_dm['MA_TINH_CALC'] = df_dm['MA_CHA_CLEAN'].fillna(df_dm['MA_DVI']).astype(str).str.zfill(2)
+        df_stopped = df_stopped.merge(df_dm[["ID", "MA_TINH_CALC"]], left_on="DM_BHXH_ID", right_on="ID", how="left")
+        df_stopped["MA_TINH"] = df_stopped["MA_TINH_CALC"].fillna("00")
+        df_stopped.drop(columns=["ID_y", "MA_TINH_CALC"], errors="ignore", inplace=True)
+    elif "MA_TINH" in df_stopped.columns:
+        df_stopped["MA_TINH"] = df_stopped["MA_TINH"].astype(str).str.zfill(2)
     else:
-        df_stopped["MA_TINH"] = "000"
+        df_stopped["MA_TINH"] = df_stopped["SO_THE_KCB"].str.slice(3, 5)
         
     df_stopped.rename(columns={
         "SO_THE_KCB": "SO_THE_KCB_GOC",
