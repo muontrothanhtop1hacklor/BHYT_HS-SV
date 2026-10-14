@@ -1,3 +1,4 @@
+# Bài: dùng chung | common/data_gen/legacy
 """
 Script sinh dữ liệu thẻ BHYT chi tiết (ST_INTHE_DTL) chuẩn thực tế.
 Quy mô: Mặc định sinh thử nghiệm hoặc full 200M dòng.
@@ -18,8 +19,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 # Thêm root vào sys.path
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.config import ST_INTHE_DTL_DIR, RANDOM_SEED, CHUNK_SIZE
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
+from common.config import ST_INTHE_DTL_DIR, RANDOM_SEED, CHUNK_PERSONS as CHUNK_SIZE
 
 HO_LIST = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương"]
 DEM_LIST = ["Văn", "Thị", "Đức", "Minh", "Thanh", "Hồng", "Tuấn", "Hải", "Xuân", "Phương", "Gia", "Ngọc", "Thu", "Mai"]

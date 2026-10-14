@@ -1,3 +1,4 @@
+# Bài: dùng chung | common/data_gen/legacy
 """
 Sinh danh mục cơ quan BHXH (DM_BHXH) cho 63 tỉnh/thành phố và các quận/huyện trực thuộc.
 Xuất ra định dạng Parquet và CSV trong data/source/dm_bhxh/.
@@ -13,8 +14,8 @@ if sys.stdout.encoding != 'utf-8':
         pass
 
 # Thêm root vào sys.path để import config
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.config import DM_BHXH_DIR
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
+from common.config import DM_BHXH_DIR
 
 # 63 tỉnh thành phố với mã tỉnh BHXH chuẩn
 PROVINCES = [

@@ -1,3 +1,4 @@
+# Bài: dùng chung | common/data_gen/legacy
 """
 Định nghĩa mô hình vòng đời đối tượng (Person Lifecycle) và các nhóm Test Case chuẩn.
 """

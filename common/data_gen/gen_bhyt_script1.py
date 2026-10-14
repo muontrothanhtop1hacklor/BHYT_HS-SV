@@ -1,3 +1,4 @@
+# Bài: dùng chung | common/data_gen
 """
 Sinh Fake Data BHYT theo VÒNG ĐỜI người tham gia (Person Lifecycle).
 

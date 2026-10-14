@@ -1,3 +1,4 @@
+# Bài: dùng chung | common/data_gen
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
