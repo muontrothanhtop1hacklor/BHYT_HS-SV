@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p1_du_lieu
 """
 Unit tests kiểm tra chất lượng dữ liệu và tính hợp lệ của schema.
 """
@@ -6,12 +7,12 @@ from pathlib import Path
 import pytest
 import pyarrow.parquet as pq
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from src.config import ST_INTHE_DTL_DIR, DM_BHXH_DIR
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from common.config import ST_INTHE_DTL_DIR, DM_BHXH_DIR
 
 def test_dm_bhxh_exists_and_valid():
     """Kiểm tra danh mục cơ quan BHXH."""
-    dm_file = DM_BHXH_DIR / "dm_bhxh.parquet"
+    dm_file = DM_BHXH_DIR / "DM_BHXH.parquet" if (DM_BHXH_DIR / "DM_BHXH.parquet").exists() else (DM_BHXH_DIR / "dm_bhxh.parquet")
     if not dm_file.exists():
         pytest.skip("Chưa sinh file dm_bhxh.parquet")
     table = pq.read_table(dm_file)
