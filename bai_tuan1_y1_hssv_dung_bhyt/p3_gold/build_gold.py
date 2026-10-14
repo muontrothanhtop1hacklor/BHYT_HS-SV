@@ -42,10 +42,7 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-try:
-    from bai_ram_1_10_100m.resource_monitor import ProcessTreeMemoryMonitor
-except ImportError:
-    from src.utils.resource_monitor import ProcessTreeMemoryMonitor
+from bai_ram_1_10_100m.resource_monitor import ProcessTreeMemoryMonitor
 
 
 def get_file_sha256(filepath: str) -> str:

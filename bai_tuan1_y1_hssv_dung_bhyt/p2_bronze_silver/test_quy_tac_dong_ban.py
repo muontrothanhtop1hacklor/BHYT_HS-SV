@@ -9,10 +9,7 @@ import pandas as pd
 import numpy as np
 
 # Import hàm nghiệp vụ kiểm tra giao tháng
-try:
-    from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import check_card_active_in_month as check_overlap_month
-except ImportError:
-    from src.pipelines.gold_logic import check_card_active_in_month as check_overlap_month
+from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import check_card_active_in_month as check_overlap_month
 
 
 # ====================================================================================

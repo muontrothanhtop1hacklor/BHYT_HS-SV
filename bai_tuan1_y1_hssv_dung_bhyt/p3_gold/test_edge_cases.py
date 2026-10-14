@@ -14,20 +14,12 @@ import numpy as np
 
 
 # Import trực tiếp hàm nghiệp vụ chuẩn từ module sản xuất (B1c)
-try:
-    from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import (
-        check_card_active_in_month as check_overlap_month,
-        evaluate_person_participation,
-        clean_khoi_code,
-        resolve_khoi_priority,
-    )
-except ImportError:
-    from src.pipelines.gold_logic import (
-        check_card_active_in_month as check_overlap_month,
-        evaluate_person_participation,
-        clean_khoi_code,
-        resolve_khoi_priority,
-    )
+from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import (
+    check_card_active_in_month as check_overlap_month,
+    evaluate_person_participation,
+    clean_khoi_code,
+    resolve_khoi_priority,
+)
 
 
 def evaluate_person_status(cards: list,

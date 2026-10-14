@@ -24,20 +24,12 @@ import pytest
 import pandas as pd
 import pyarrow.parquet as pq
 
-try:
-    from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import (
-        check_card_active_in_month,
-        evaluate_person_participation,
-        clean_khoi_code,
-        resolve_khoi_priority,
-    )
-except ImportError:
-    from src.pipelines.gold_logic import (
-        check_card_active_in_month,
-        evaluate_person_participation,
-        clean_khoi_code,
-        resolve_khoi_priority,
-    )
+from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.gold_logic import (
+    check_card_active_in_month,
+    evaluate_person_participation,
+    clean_khoi_code,
+    resolve_khoi_priority,
+)
 
 
 class TestGoldBusinessLogicUnit:
@@ -140,33 +132,21 @@ class TestGoldFailureScenarios:
     """Kịch bản lỗi: tham số sai, file thiếu -> pipeline phải báo lỗi rõ ràng."""
 
     def test_invalid_stop_def_raises_error(self):
-        try:
-            from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
-        except ImportError:
-            from scripts.build_gold import run_gold_pipeline
+        from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
         with pytest.raises(ValueError, match="stop_def"):
             run_gold_pipeline(stop_def="invalid_def")
 
     def test_invalid_date_range_raises_error(self):
-        try:
-            from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
-        except ImportError:
-            from scripts.build_gold import run_gold_pipeline
+        from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
         with pytest.raises(ValueError, match="base_start"):
             run_gold_pipeline(base_start="2024-11-01", base_next="2024-10-01")
 
     def test_missing_dm_bhxh_file_raises_error(self):
-        try:
-            from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
-        except ImportError:
-            from scripts.build_gold import run_gold_pipeline
+        from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
         with pytest.raises(FileNotFoundError, match="BHXH"):
             run_gold_pipeline(dm_bhxh_path="data/non_existent_dm.parquet")
 
     def test_missing_silver_dir_raises_error(self):
-        try:
-            from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
-        except ImportError:
-            from scripts.build_gold import run_gold_pipeline
+        from bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold import run_gold_pipeline
         with pytest.raises(FileNotFoundError, match="Silver Parquet"):
             run_gold_pipeline(silver_dir="data/non_existent_silver")
