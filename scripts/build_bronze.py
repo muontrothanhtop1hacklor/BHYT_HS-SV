@@ -70,6 +70,12 @@ def process_chunk(file_path: str, out_dir: str, chunk_id: int, batch_id: str, in
     table = pq.read_table(file_path)
     n_rows = len(table)
 
+    # Nếu nguồn là dữ liệu rút gọn (Script 1) chưa có MA_TINH, tự động trích từ SO_THE_KCB (vị trí 3..5)
+    if "MA_TINH" not in table.column_names and "SO_THE_KCB" in table.column_names:
+        import pyarrow.compute as pc
+        ma_tinh = pc.utf8_slice_codeunits(table.column("SO_THE_KCB"), 3, 5)
+        table = table.append_column("MA_TINH", ma_tinh)
+
     # Tạo 4 cột kỹ thuật pyarrow
     col_source = pa.repeat(pa.scalar(base_name, pa.string()), n_rows)
     col_chunk = pa.repeat(pa.scalar(chunk_id, pa.int32()), n_rows)
@@ -111,8 +117,12 @@ def run_bronze(
     global ingest_at
     ingest_at = datetime.now().isoformat()
 
+    if not os.path.exists(input_dir):
+        alt = os.path.join(os.path.dirname(input_dir), "ST_INTHE_DTL")
+        if os.path.exists(alt):
+            input_dir = alt
     os.makedirs(output_dir, exist_ok=True)
-    raw_files = sorted(glob.glob(os.path.join(input_dir, "part-*.parquet")))
+    raw_files = sorted(glob.glob(os.path.join(input_dir, "part*.parquet")))
     total_files = len(raw_files)
 
     ram_used_start, ram_total, _ = get_system_ram()

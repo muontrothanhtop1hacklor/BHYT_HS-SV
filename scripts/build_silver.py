@@ -113,8 +113,16 @@ def process_silver_chunk(bronze_file: str, silver_dir: str, quarantine_dir: str,
     tu_ngay_col = table.column("TU_NGAY")
     den_ngay_col = table.column("DEN_NGAY")
 
-    # Ép kiểu date nếu đang là string hoặc int
-    # TU_NGAY, DEN_NGAY trong parquet gen_bhyt là pa.date32()
+    # Ép kiểu date32 nếu đang là timestamp hoặc string
+    if tu_ngay_col.type != pa.date32():
+        tu_ngay_col = pc.cast(tu_ngay_col, pa.date32())
+        table = table.set_column(table.schema.get_field_index("TU_NGAY"), "TU_NGAY", tu_ngay_col)
+    if den_ngay_col.type != pa.date32():
+        den_ngay_col = pc.cast(den_ngay_col, pa.date32())
+        table = table.set_column(table.schema.get_field_index("DEN_NGAY"), "DEN_NGAY", den_ngay_col)
+    if "NGAY_SINH" in table.column_names and table.column("NGAY_SINH").type != pa.date32():
+        table = table.set_column(table.schema.get_field_index("NGAY_SINH"), "NGAY_SINH", pc.cast(table.column("NGAY_SINH"), pa.date32()))
+
     is_invalid_date_range = pc.greater(tu_ngay_col, den_ngay_col)
     n_quarantine = pc.sum(is_invalid_date_range).as_py() or 0
 
@@ -167,7 +175,7 @@ def run_silver(
     os.makedirs(silver_dir, exist_ok=True)
     os.makedirs(quarantine_dir, exist_ok=True)
 
-    bronze_files = sorted(glob.glob(os.path.join(bronze_dir, "part-*.parquet")))
+    bronze_files = sorted(glob.glob(os.path.join(bronze_dir, "part*.parquet")))
     total_files = len(bronze_files)
 
     ram_start, ram_total, _ = get_system_ram()

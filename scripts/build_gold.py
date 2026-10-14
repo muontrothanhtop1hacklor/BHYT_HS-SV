@@ -76,6 +76,8 @@ def compute_gold_global(
     if stop_def == "hssv":
         chk_filter += " AND MA_KHOI IN ('HS', 'SV')"
 
+    dm_read_sql = f"read_csv_auto('{dm_bhxh_path}')" if str(dm_bhxh_path).endswith('.csv') else f"read_parquet('{dm_bhxh_path}')"
+
     sql = f"""
     -- 1. Tập thẻ hợp lệ giao tháng gốc của HSSV
     CREATE TEMPORARY TABLE base_cards AS
@@ -143,15 +145,15 @@ def compute_gold_global(
     SELECT
         CAST(MA_DVI AS VARCHAR(20)) AS MA_TINH,
         CAST(TEN_DVI AS VARCHAR(200)) AS TEN_TINH
-    FROM read_parquet('{dm_bhxh_path}')
-    WHERE MA_CHA IS NULL OR MA_CHA = '';
+    FROM {dm_read_sql}
+    WHERE MA_CHA IS NULL OR MA_CHA = '' OR MA_CHA = '00';
 
     -- Bảng ánh xạ từ DM_BHXH_ID ra MA_TINH_QUY_DOI
     CREATE TEMPORARY TABLE dm_mapping AS
     SELECT
         ID AS DM_BHXH_ID,
-        CAST(COALESCE(NULLIF(MA_CHA, ''), MA_DVI) AS VARCHAR(20)) AS MA_TINH_QUY_DOI
-    FROM read_parquet('{dm_bhxh_path}');
+        CAST(COALESCE(NULLIF(NULLIF(MA_CHA, ''), '00'), MA_DVI) AS VARCHAR(20)) AS MA_TINH_QUY_DOI
+    FROM {dm_read_sql};
 
     -- 5. Bảng thống kê địa bàn hành chính TK_DBHC
     CREATE TEMPORARY TABLE tk_raw AS
@@ -207,7 +209,7 @@ def compute_gold_chunk(
     Tận dụng giả định dữ liệu sinh: mọi thẻ của 1 người nằm cùng 1 chunk.
     Xử lý song song từng chunk bằng DuckDB rồi gộp.
     """
-    silver_files = sorted(glob.glob(os.path.join(silver_dir, "part-*.parquet")))
+    silver_files = sorted(glob.glob(os.path.join(silver_dir, "part*.parquet")))
     con = duckdb.connect(database=":memory:")
     con.execute(f"PRAGMA threads={threads};")
 
@@ -215,20 +217,22 @@ def compute_gold_chunk(
     if stop_def == "hssv":
         chk_filter += " AND MA_KHOI IN ('HS', 'SV')"
 
+    dm_read_sql = f"read_csv_auto('{dm_bhxh_path}')" if str(dm_bhxh_path).endswith('.csv') else f"read_parquet('{dm_bhxh_path}')"
+
     # Đọc dm_bhxh
     con.execute(f"""
     CREATE TEMPORARY TABLE dm_tinh AS
     SELECT
         CAST(MA_DVI AS VARCHAR(20)) AS MA_TINH,
         CAST(TEN_DVI AS VARCHAR(200)) AS TEN_TINH
-    FROM read_parquet('{dm_bhxh_path}')
-    WHERE MA_CHA IS NULL OR MA_CHA = '';
+    FROM {dm_read_sql}
+    WHERE MA_CHA IS NULL OR MA_CHA = '' OR MA_CHA = '00';
 
     CREATE TEMPORARY TABLE dm_mapping AS
     SELECT
         ID AS DM_BHXH_ID,
-        CAST(COALESCE(NULLIF(MA_CHA, ''), MA_DVI) AS VARCHAR(20)) AS MA_TINH_QUY_DOI
-    FROM read_parquet('{dm_bhxh_path}');
+        CAST(COALESCE(NULLIF(NULLIF(MA_CHA, ''), '00'), MA_DVI) AS VARCHAR(20)) AS MA_TINH_QUY_DOI
+    FROM {dm_read_sql};
     """)
 
     # Quét từng chunk và gộp vào bảng tạm
@@ -431,9 +435,19 @@ def run_gold_pipeline(
         raise ValueError(f"Mốc thời gian kiểm tra không hợp lệ: chk_start ({chk_start}) >= chk_next ({chk_next})!")
 
     if not os.path.exists(dm_bhxh_path):
+        for alt in [
+            os.path.join(os.path.dirname(dm_bhxh_path), "DM_BHXH.parquet"),
+            os.path.join(os.path.dirname(dm_bhxh_path), "DM_BHXH.csv"),
+            os.path.join(os.path.dirname(dm_bhxh_path), "dm_bhxh.csv"),
+        ]:
+            if os.path.exists(alt):
+                dm_bhxh_path = alt
+                break
+
+    if not os.path.exists(dm_bhxh_path):
         raise FileNotFoundError(f"Không tìm thấy file danh mục BHXH tại: {dm_bhxh_path}")
 
-    silver_files = glob.glob(os.path.join(silver_dir, "part-*.parquet"))
+    silver_files = glob.glob(os.path.join(silver_dir, "part*.parquet"))
     if not silver_files:
         raise FileNotFoundError(f"Không tìm thấy file dữ liệu Silver Parquet nào trong: {silver_dir}")
 
@@ -448,13 +462,11 @@ def run_gold_pipeline(
     print(f" Số luồng xử lý       : {threads}")
     print(f" Số chunks Silver     : {len(silver_files)}")
     print("-" * 80)
-    print(f" Số luồng xử lý       : {threads}")
-    print("-" * 80)
 
     # Khóa thư mục theo bộ tham số: YYYYMMDD_YYYYMMDD_stopdef
     param_tag = f"{base_start.replace('-', '')}_{chk_start.replace('-', '')}_{stop_def}"
     out_dir = os.path.join(base_out_dir, param_tag)
-    silver_pattern = os.path.join(silver_dir, "part-*.parquet")
+    silver_pattern = os.path.join(silver_dir, "part*.parquet")
 
     results_benchmark = {}
 
