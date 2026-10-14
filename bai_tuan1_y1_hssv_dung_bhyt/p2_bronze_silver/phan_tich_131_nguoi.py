@@ -1,3 +1,4 @@
+# Bài: tuan1_y1 | Phần: p2_bronze_silver
 # -*- coding: utf-8 -*-
 """
 scripts/analyze_131_gap.py
