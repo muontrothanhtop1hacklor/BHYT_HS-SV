@@ -6,27 +6,29 @@
 
 ---
 
-## 1. Bảng ánh xạ cũ -> mới và danh sách file vào `_luu_tru/`
+## 1. Bảng ánh xạ cũ -> mới và danh sách các file loại bỏ vĩnh viễn khỏi repo
 
-### A. Danh sách các file chuyển vào `_luu_tru/` (Bỏ phân chia Bạn A / Bạn B)
-Theo quy tắc B3, bạn cùng làm có giải pháp riêng ở máy khác; hai bên đối chiếu bằng FILE KẾT QUẢ. Toàn bộ mã nguồn cũ liên quan đến pipeline của bạn A/B được lưu trữ tại `_luu_tru/` (người dùng sẽ tự xóa sau):
+### A. Danh sách các file cũ đã loại bỏ vĩnh viễn (Bỏ Bạn A / Bạn B và Bài đo RAM 1-10-100M)
+Theo quy tắc B3 và yêu cầu dự án chỉ tập trung vào Tuần 1 (CV 835/QLT), bạn cùng làm có giải pháp riêng ở máy khác; hai bên đối chiếu bằng FILE KẾT QUẢ. Toàn bộ mã nguồn cũ liên quan đến pipeline của bạn A/B (`dev_a`, `dev_b`), bài đo RAM (`bai_ram_1_10_100m`) và thư mục `_luu_tru/` đã được **xóa bỏ hoàn toàn khỏi repo** (lịch sử commit của git vẫn lưu vết nếu cần tra cứu):
 
-| STT | File cũ | Vị trí chuyển vào `_luu_tru/` | Thao tác | Ghi chú |
-|:---:|:---|:---|:---:|:---|
-| 1 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/pipeline_dev_a.py` | `_luu_tru/p4_giai_phap_a_b/dev_a/pipeline_dev_a.py` | `git mv` | Bỏ pipeline nhánh A |
-| 2 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/chay.bat` | `_luu_tru/p4_giai_phap_a_b/dev_a/chay.bat` | `git mv` | Kịch bản batch nhánh A |
-| 3 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/README.md` | `_luu_tru/p4_giai_phap_a_b/dev_a/README.md` | `git mv` | Tài liệu nhánh A |
-| 4 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/__init__.py` | `_luu_tru/p4_giai_phap_a_b/dev_a/__init__.py` | `git mv` | Package init |
-| 5 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/pipeline_dev_b.py` | `_luu_tru/p4_giai_phap_a_b/dev_b/pipeline_dev_b.py` | `git mv` | Bỏ pipeline nhánh B |
-| 6 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/chay.bat` | `_luu_tru/p4_giai_phap_a_b/dev_b/chay.bat` | `git mv` | Kịch bản batch nhánh B |
-| 7 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/README.md` | `_luu_tru/p4_giai_phap_a_b/dev_b/README.md` | `git mv` | Tài liệu nhánh B |
-| 8 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/__init__.py` | `_luu_tru/p4_giai_phap_a_b/dev_b/__init__.py` | `git mv` | Package init |
-| 9 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/README.md` | `_luu_tru/p4_giai_phap_a_b/README.md` | `git mv` | Bỏ thư mục p4_giai_phap_a_b |
-| 10 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/__init__.py` | `_luu_tru/p4_giai_phap_a_b/__init__.py` | `git mv` | Package init |
-| 11 | `src/config.py` | `_luu_tru/src/config.py` | `git mv` | File config cũ ở root (đã thay bằng `common/config.py`) |
-| 12 | `src/pipelines/__init__.py` | `_luu_tru/src/pipelines/__init__.py` | `git mv` | Package cũ |
-| 13 | `src/reconciliation/__init__.py` | `_luu_tru/src/reconciliation/__init__.py` | `git mv` | Package cũ |
-| 14 | `tests/__init__.py` | `_luu_tru/tests/__init__.py` | `git mv` | Package cũ (test đã chuyển về từng phần) |
+| STT | File / Module cũ | Trạng thái xử lý | Ghi chú |
+|:---:|:---|:---:|:---|
+| 1 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/pipeline_dev_a.py` | `Xóa hoàn toàn` | Bỏ pipeline nhánh A |
+| 2 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/chay.bat` | `Xóa hoàn toàn` | Kịch bản batch nhánh A |
+| 3 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/README.md` | `Xóa hoàn toàn` | Tài liệu nhánh A |
+| 4 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/__init__.py` | `Xóa hoàn toàn` | Package init nhánh A |
+| 5 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/pipeline_dev_b.py` | `Xóa hoàn toàn` | Bỏ pipeline nhánh B |
+| 6 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/chay.bat` | `Xóa hoàn toàn` | Kịch bản batch nhánh B |
+| 7 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/README.md` | `Xóa hoàn toàn` | Tài liệu nhánh B |
+| 8 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/__init__.py` | `Xóa hoàn toàn` | Package init nhánh B |
+| 9 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/README.md` | `Xóa hoàn toàn` | Bỏ thư mục p4_giai_phap_a_b |
+| 10 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/__init__.py` | `Xóa hoàn toàn` | Package init |
+| 11 | `bai_ram_1_10_100m/` | `Xóa hoàn toàn` | Không thuộc phạm vi CV 835; monitor đã tích hợp nội bộ vào build_gold |
+| 12 | `src/config.py` | `Xóa hoàn toàn` | File config cũ ở root (đã chuẩn hóa thành `common/config.py`) |
+| 13 | `src/pipelines/__init__.py` | `Xóa hoàn toàn` | Package cũ không còn dùng |
+| 14 | `src/reconciliation/__init__.py` | `Xóa hoàn toàn` | Package cũ không còn dùng |
+| 15 | `tests/__init__.py` | `Xóa hoàn toàn` | Package cũ không còn dùng (test đã chuyển về từng phần) |
+| 16 | `_luu_tru/` | `Xóa hoàn toàn` | Xóa sạch thư mục tạm lưu trữ, repo đạt 100% gọn gàng |
 
 ### B. Bảng ánh xạ tái cấu trúc Phần 4 (`p4_doi_soat`)
 Đổi tên `p5_doi_soat` thành `p4_doi_soat` và bổ sung các thành phần trao đổi:
@@ -81,7 +83,7 @@ Theo quy tắc B3, bạn cùng làm có giải pháp riêng ở máy khác; hai 
 ---
 
 ## 3. Kiểm tra Đường dẫn và Import (Tiêu chí C2)
-- Toàn bộ repo (ngoài thư mục `_luu_tru/`) **không còn bất kỳ đường dẫn hay import nào** trỏ vào các vị trí cũ (`scripts/`, `src/`, `sql/`, `tests/`, `docs/`).
+- Toàn bộ repo **không còn bất kỳ đường dẫn hay import nào** trỏ vào các vị trí cũ (`scripts/`, `src/`, `sql/`, `tests/`, `docs/`) và không còn thư mục tạm `_luu_tru/`.
 - Không còn bất kỳ tham chiếu nào tới `pipeline_dev_a` hay `pipeline_dev_b` trong mã nguồn đang hoạt động.
 - File `chay_tat_ca.bat` đã được sửa hoàn toàn: không còn gọi `pipeline_dev_a` / `pipeline_dev_b`, chuyển sang gọi trực tiếp `build_gold.py` ở phương pháp sản xuất chuẩn (`--method global`).
 

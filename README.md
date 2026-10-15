@@ -15,10 +15,6 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
 ├── README.md                                  # Hướng dẫn tổng thể: bài nào ở đâu, thứ tự chạy
 ├── requirements.txt                           # Các thư viện phụ thuộc (Python 3.14+, PyArrow, DuckDB...)
 ├── .agents/                                   # Cấu hình AI Pair Programming Agents
-├── _luu_tru/                                  # Thư mục lưu trữ các file đã loại bỏ khỏi cây chính
-│   ├── p4_giai_phap_a_b/                      # Lưu trữ code pipeline A/B cũ
-│   ├── src/                                   # Lưu trữ module src cũ
-│   └── tests/                                 # Lưu trữ module tests cũ
 ├── common/                                    # TÀI NGUYÊN DÙNG CHUNG CHO NHIỀU BÀI
 │   ├── config.py                              # Cấu hình mốc thời gian CV 835 và đường dẫn data
 │   └── data_gen/                              # Bộ công cụ sinh và xác thực dữ liệu giả lập

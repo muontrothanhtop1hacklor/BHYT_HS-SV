@@ -14,31 +14,25 @@
 |:---:|:---|:---|:---|
 | 1 | `common/config.py` | `common/config.py` | Cập nhật bổ sung đường dẫn `ket_qua_cua_ban` và file kết quả Gold của tôi |
 | 2 | `common/data_gen/*` | `common/data_gen/*` | Giữ nguyên các script sinh dữ liệu dùng chung (`gen_bhyt.py`, `gen_bhyt_script1.py`, `validate_bhyt.py`, `chay_sinh_du_lieu.bat`, `legacy/*`) |
-| 3 | `bai_ram_1_10_100m/resource_monitor.py` | `bai_ram_1_10_100m/resource_monitor.py` | Giữ nguyên (bài toán đo RAM 1-10-100M) |
+| 3 | `bai_ram_1_10_100m/` | *(Xóa bỏ)* | Loại bỏ khỏi repo do nằm ngoài phạm vi CV 835; monitor RAM được nhúng trực tiếp vào build_gold |
 | 4 | `bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/*` | `bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/*` | Giữ nguyên DDL, test_data_quality, bao_cao_ngay1 |
 | 5 | `bai_tuan1_y1_hssv_dung_bhyt/p2_bronze_silver/*` | `bai_tuan1_y1_hssv_dung_bhyt/p2_bronze_silver/*` | Giữ nguyên build_bronze, build_silver, phan_tich_131_nguoi, test_quy_tac_dong_ban |
 | 6 | `bai_tuan1_y1_hssv_dung_bhyt/p3_gold/*` | `bai_tuan1_y1_hssv_dung_bhyt/p3_gold/*` | Giữ nguyên gold_logic, build_gold, ddl_output_tables, test_edge_cases, test_gold_invariants |
 | 7 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/query_y1.sql` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/sql/query_y1_cte_window.sql` | Chuyển file SQL sang thư mục SQL đối soát, đổi tên kỹ thuật (CTE + Window function) |
 | 8 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/query_y1.sql` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/sql/query_y1_left_join.sql` | Chuyển file SQL sang thư mục SQL đối soát, đổi tên kỹ thuật (Left Join IS NULL) |
-| 9 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/pipeline_dev_a.py` | `_luu_tru/p4_giai_phap_a_b/dev_a/pipeline_dev_a.py` | Bỏ A/B: lưu trữ pipeline A do bạn cùng làm có giải pháp riêng ở máy khác |
-| 10 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/chay.bat` | `_luu_tru/p4_giai_phap_a_b/dev_a/chay.bat` | Bỏ A/B: kịch bản chạy pipeline A |
-| 11 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/README.md` | `_luu_tru/p4_giai_phap_a_b/dev_a/README.md` | Tài liệu A cũ |
-| 12 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/pipeline_dev_b.py` | `_luu_tru/p4_giai_phap_a_b/dev_b/pipeline_dev_b.py` | Bỏ A/B: lưu trữ pipeline B |
-| 13 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/chay.bat` | `_luu_tru/p4_giai_phap_a_b/dev_b/chay.bat` | Bỏ A/B: kịch bản chạy pipeline B |
-| 14 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/README.md` | `_luu_tru/p4_giai_phap_a_b/dev_b/README.md` | Tài liệu B cũ |
-| 15 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/README.md` | `_luu_tru/p4_giai_phap_a_b/README.md` | Bỏ A/B: thư mục p4_giai_phap_a_b không còn dùng |
-| 16 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/__init__.py` | `_luu_tru/p4_giai_phap_a_b/__init__.py` | Bỏ A/B: init package |
-| 17 | `bai_tuan1_y1_hssv_dung_bhyt/p5_doi_soat` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat` | Đổi tên Phần 5 thành Phần 4 (do bỏ p4_giai_phap_a_b) |
-| 18 | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/compare_results.py` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/compare_results.py` | Sửa đường dẫn: so kết quả Gold của tôi với `ket_qua_cua_ban` |
-| 19 | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/verify_sql_duckdb.py` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/verify_sql_duckdb.py` | Script kiểm chứng độc lập bằng SQL DuckDB |
-| 20 | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/chay_doi_soat.bat` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/chay_doi_soat.bat` | Cập nhật lệnh chạy compare_results từ p4_doi_soat |
-| 21 | *(Mới)* | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/ket_qua_cua_ban/README.md` | Thư mục rỗng nhận file kết quả từ bạn cùng làm |
-| 22 | *(Mới)* | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/dinh_dang_trao_doi.md` | Tài liệu đặc tả định dạng file kết quả đối soát trao đổi |
-| 23 | `src/config.py` | `_luu_tru/src/config.py` | File cũ trong root, đã thay bằng common/config.py |
-| 24 | `src/pipelines/__init__.py` | `_luu_tru/src/pipelines/__init__.py` | Thư mục cũ không còn dùng |
-| 25 | `src/reconciliation/__init__.py` | `_luu_tru/src/reconciliation/__init__.py` | Thư mục cũ không còn dùng |
-| 26 | `tests/__init__.py` | `_luu_tru/tests/__init__.py` | Thư mục cũ không còn dùng (test đã chuyển về từng phần) |
-| 27 | `bai_tuan1_y1_hssv_dung_bhyt/chay_tat_ca.bat` | `bai_tuan1_y1_hssv_dung_bhyt/chay_tat_ca.bat` | Cập nhật gọi build_gold (phương pháp chuẩn global), không gọi pipeline A/B |
+| 9 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_a/*` | *(Xóa bỏ)* | Bỏ A/B: xóa code nhánh A (bạn cùng làm có giải pháp riêng ở máy khác) |
+| 10 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/dev_b/*` | *(Xóa bỏ)* | Bỏ A/B: xóa code nhánh B |
+| 11 | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b/` | *(Xóa bỏ)* | Bỏ thư mục p4_giai_phap_a_b |
+| 12 | `bai_tuan1_y1_hssv_dung_bhyt/p5_doi_soat` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat` | Đổi tên Phần 5 thành Phần 4 (do bỏ p4_giai_phap_a_b) |
+| 13 | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/compare_results.py` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/compare_results.py` | Sửa đường dẫn: so kết quả Gold của tôi với `ket_qua_cua_ban` |
+| 14 | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/verify_sql_duckdb.py` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/verify_sql_duckdb.py` | Script kiểm chứng độc lập bằng SQL DuckDB |
+| 15 | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/chay_doi_soat.bat` | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/chay_doi_soat.bat` | Cập nhật lệnh chạy compare_results từ p4_doi_soat |
+| 16 | *(Mới)* | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/ket_qua_cua_ban/README.md` | Thư mục rỗng nhận file kết quả từ bạn cùng làm |
+| 17 | *(Mới)* | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/dinh_dang_trao_doi.md` | Tài liệu đặc tả định dạng file kết quả đối soát trao đổi |
+| 18 | `src/config.py` | *(Xóa bỏ)* | File cũ trong root, đã thay bằng common/config.py |
+| 19 | `src/pipelines/`, `src/reconciliation/` | *(Xóa bỏ)* | Thư mục cũ không còn dùng |
+| 20 | `tests/__init__.py` | *(Xóa bỏ)* | Thư mục cũ không còn dùng (test đã chuyển về từng phần) |
+| 21 | `bai_tuan1_y1_hssv_dung_bhyt/chay_tat_ca.bat` | `bai_tuan1_y1_hssv_dung_bhyt/chay_tat_ca.bat` | Cập nhật gọi build_gold (phương pháp chuẩn global), không gọi pipeline A/B |
 
 ---
 
