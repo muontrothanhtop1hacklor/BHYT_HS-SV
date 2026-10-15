@@ -30,9 +30,7 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
 │           ├── generate_dm_bhxh.py
 │           ├── generate_st_inthe_dtl.py
 │           └── lifecycle.py
-├── bai_ram_1_10_100m/                         # BÀI TOÁN KIỂM SOÁT TÀI NGUYÊN & ĐO RAM
-│   └── resource_monitor.py                    # Đo RAM nền và RSS của cây tiến trình cha + con (psutil)
-└── bai_tuan1_y1_hssv_dung_bhyt/               # BÀI TOÁN TUẦN 1 - Ý 1: RÀ SOÁT HSSV DỪNG BHYT
+└── bai_tuan1_y1_hssv_dung_bhyt/               # BÀI TOÁN TUẦN 1 - Ý 1: RÀ SOÁT HSSV DỪNG BHYT (CV 835/QLT)
     ├── README.md                              # Tóm tắt đề bài, định nghĩa nghiệp vụ & thứ tự chạy
     ├── chay_tat_ca.bat                        # Script batch chạy tự động toàn bộ workflow Tuần 1
     ├── p1_du_lieu/                            # PHẦN 1: Khám phá dữ liệu thô
@@ -72,7 +70,6 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
 | Bài học / Module | Thư mục | Mục đích / Chức năng chính | Lệnh thực thi chính |
 |:---|:---|:---|:---|
 | **Dùng chung** | `common/data_gen` | Sinh dữ liệu giả lập quy mô lớn và xuất đáp án chuẩn | `.\common\data_gen\chay_sinh_du_lieu.bat` |
-| **Đo RAM** | `bai_ram_1_10_100m` | Giám sát RSS tiến trình phục vụ bài toán 1M, 10M, 100M | Tích hợp `ProcessTreeMemoryMonitor` |
 | **Tuần 1 - P1** | `bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu` | Schema DDL & Test chất lượng dữ liệu nguồn | `pytest bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/test_data_quality.py -v` |
 | **Tuần 1 - P2** | `bai_tuan1_y1_hssv_dung_bhyt/p2_bronze_silver` | Pipeline Bronze & Làm sạch Silver (5 quy tắc) | `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver` |
 | **Tuần 1 - P3** | `bai_tuan1_y1_hssv_dung_bhyt/p3_gold` | Pipeline Gold danh sách cá nhân và thống kê tỉnh | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global` |
