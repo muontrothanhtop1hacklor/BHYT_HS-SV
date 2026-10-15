@@ -26,9 +26,8 @@ Một thẻ BHYT được xác định là có giá trị sử dụng trong thá
 |:---|:---|:---|:---|:---|
 | **Phần 1** | `p1_du_lieu` | DDL bảng thô và kiểm tra chất lượng dữ liệu nguồn | Schema validation, Báo cáo Ngày 1 | `pytest bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/test_data_quality.py -v` |
 | **Phần 2** | `p2_bronze_silver` | Kiến trúc Medallion Bronze (nạp thô) & Silver (làm sạch 5 loại lỗi) | `data/bronze/`, `data/silver/`, `quarantine/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_bronze`<br>`python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver` |
-| **Phần 3** | `p3_gold` | Pipeline tổng hợp báo cáo Gold danh sách & thống kê 63 tỉnh | `data/output/gold/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold` |
-| **Phần 4** | `p4_giai_phap_a_b` | 2 giải pháp xử lý song song độc lập của Bạn A & Bạn B | `data/output/dev_a/`<br>`data/output/dev_b/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_a.pipeline_dev_a`<br>`python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_b.pipeline_dev_b` |
-| **Phần 5** | `p5_doi_soat` | Đối chiếu chéo A vs B vs SCENARIO và kiểm chứng DuckDB SQL | Báo cáo đối soát `reconciliation_report.md` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p5_doi_soat.compare_results` |
+| **Phần 3** | `p3_gold` | Pipeline tổng hợp báo cáo Gold danh sách & thống kê 63 tỉnh | `data/output/gold/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global` |
+| **Phần 4** | `p4_doi_soat` | Đối soát độc lập với file bạn cùng làm & kiểm chứng DuckDB SQL | Báo cáo đối soát `reconciliation_report.md` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results` |
 
 ---
 
@@ -40,28 +39,25 @@ Chạy file [chay_tat_ca.bat](file:///c:/Users/Administrator/200m/bai_tuan1_y1_h
 .\bai_tuan1_y1_hssv_dung_bhyt\chay_tat_ca.bat
 ```
 
-### Cách 2: Chạy lần lượt từng bước qua dòng lệnh
-1. **Sinh dữ liệu thử nghiệm:**
-   ```powershell
-   python common/data_gen/gen_bhyt_script1.py --persons 200000 --chunk 100000 --seed 42 --out data/bhyt_data
-   ```
-2. **Kiểm tra chất lượng dữ liệu nguồn:**
+### Cách 2: Chạy lần lượt từng bước qua dòng lệnh (`python -m`)
+1. **Kiểm tra chất lượng dữ liệu nguồn:**
    ```powershell
    pytest bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/test_data_quality.py -v
    ```
-3. **Thực thi Pipeline Bạn A:**
+2. **Làm sạch dữ liệu tầng Silver:**
    ```powershell
-   python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_a.pipeline_dev_a
+   python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver
    ```
-4. **Thực thi Pipeline Bạn B:**
+3. **Xây dựng Báo cáo tổng hợp tầng Gold:**
    ```powershell
-   python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_b.pipeline_dev_b
+   python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global
    ```
-5. **Đối soát kết quả độc lập:**
+4. **Đối soát kết quả với file của bạn cùng làm:**
+   *(Đặt file `bc_hssv_dung_tham_gia.parquet` nhận từ bạn vào `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/ket_qua_cua_ban/`)*
    ```powershell
-   python -m bai_tuan1_y1_hssv_dung_bhyt.p5_doi_soat.compare_results
+   python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results
    ```
-6. **Chạy toàn bộ bộ kiểm thử đơn vị & biên (42 tests):**
+5. **Chạy toàn bộ bộ kiểm thử đơn vị & biên (42 tests):**
    ```powershell
    pytest -v
    ```

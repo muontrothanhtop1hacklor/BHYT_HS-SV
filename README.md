@@ -3,6 +3,9 @@
 Dự án nghiên cứu và xử lý dữ liệu lớn Bảo hiểm Y tế (BHYT) quy mô **200 triệu dòng thẻ** (~20 triệu người).
 Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (Lesson / Component-based) phục vụ việc mở rộng nhiều bài toán độc lập nhưng dùng chung tài nguyên.
 
+> **Bối cảnh phát triển:**
+> Repo này lưu trữ giải pháp độc lập của tôi theo mô hình kiến trúc Medallion (**Bronze -> Silver -> Gold**) và bộ công cụ đối soát chéo độc lập với file kết quả nhận từ máy của bạn cùng làm (`ket_qua_cua_ban`).
+
 ---
 
 ## 1. Cấu trúc Tổng quan Dự án (Project Architecture)
@@ -12,6 +15,10 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
 ├── README.md                                  # Hướng dẫn tổng thể: bài nào ở đâu, thứ tự chạy
 ├── requirements.txt                           # Các thư viện phụ thuộc (Python 3.14+, PyArrow, DuckDB...)
 ├── .agents/                                   # Cấu hình AI Pair Programming Agents
+├── _luu_tru/                                  # Thư mục lưu trữ các file đã loại bỏ khỏi cây chính
+│   ├── p4_giai_phap_a_b/                      # Lưu trữ code pipeline A/B cũ
+│   ├── src/                                   # Lưu trữ module src cũ
+│   └── tests/                                 # Lưu trữ module tests cũ
 ├── common/                                    # TÀI NGUYÊN DÙNG CHUNG CHO NHIỀU BÀI
 │   ├── config.py                              # Cấu hình mốc thời gian CV 835 và đường dẫn data
 │   └── data_gen/                              # Bộ công cụ sinh và xác thực dữ liệu giả lập
@@ -32,6 +39,7 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
     │   ├── ddl_dm_bhxh.sql, ddl_st_inthe_dtl.sql
     │   ├── test_data_quality.py               # Kiểm tra schema dữ liệu thô
     │   ├── ke_hoach_chuyen_cau_truc.md        # Kế hoạch tái cấu trúc repo
+    │   ├── bao_cao_chuyen_cau_truc.md         # Báo cáo nghiệm thu tái cấu trúc
     │   └── bao_cao_ngay1.md                   # Báo cáo Ngày 1
     ├── p2_bronze_silver/                      # PHẦN 2: Medallion Bronze & Silver
     │   ├── build_bronze.py, build_silver.py   # Ingestion Bronze & Cleaning Silver
@@ -45,15 +53,16 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
     │   ├── test_edge_cases.py                 # Bộ test 20 ca biên logic tham gia/dừng
     │   ├── test_gold_invariants.py            # Bộ test 15 ca bất biến số liệu Gold
     │   └── plan_ngay3.md, bao_cao_ngay3.md
-    ├── p4_giai_phap_a_b/                      # PHẦN 4: Hai giải pháp kỹ thuật độc lập
-    │   ├── dev_a/                             # Giải pháp Bạn A: PyArrow Chunk Streaming (Out-of-Core)
-    │   │   ├── pipeline_dev_a.py, query_y1.sql, chay.bat
-    │   └── dev_b/                             # Giải pháp Bạn B: DuckDB In-Memory SQL
-    │       ├── pipeline_dev_b.py, query_y1.sql, chay.bat
-    └── p5_doi_soat/                           # PHẦN 5: Đối soát & Kiểm chứng
-        ├── compare_results.py                 # So khớp kết quả A vs B vs SCENARIO (100%)
+    └── p4_doi_soat/                           # PHẦN 4: Đối soát & Kiểm chứng Độc lập
+        ├── compare_results.py                 # So file kết quả của Tôi với file của Bạn cùng làm
         ├── verify_sql_duckdb.py               # Kiểm chứng độc lập bằng SQL thuần DuckDB
-        └── chay_doi_soat.bat                  # Batch chạy đối soát
+        ├── sql/                               # Các câu truy vấn SQL chuẩn tắc
+        │   ├── query_y1_cte_window.sql        # Truy vấn CTE + Window Function
+        │   └── query_y1_left_join.sql         # Truy vấn Left Join IS NULL
+        ├── ket_qua_cua_ban/                   # Thư mục đặt file kết quả nhận từ bạn cùng làm
+        │   └── README.md
+        ├── dinh_dang_trao_doi.md              # Đặc tả quy cách file kết quả trao đổi
+        └── chay_doi_soat.bat                  # Batch chạy đối soát tự động
 ```
 
 ---
@@ -63,24 +72,38 @@ Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (
 | Bài học / Module | Thư mục | Mục đích / Chức năng chính | Lệnh thực thi chính |
 |:---|:---|:---|:---|
 | **Dùng chung** | `common/data_gen` | Sinh dữ liệu giả lập quy mô lớn và xuất đáp án chuẩn | `.\common\data_gen\chay_sinh_du_lieu.bat` |
-| **Đo RAM** | `bai_ram_1_10_100m` | Giám sát RSS tiến trình phục vụ bài toán 1M, 10M, 100M | Sử dụng `ProcessTreeMemoryMonitor` |
+| **Đo RAM** | `bai_ram_1_10_100m` | Giám sát RSS tiến trình phục vụ bài toán 1M, 10M, 100M | Tích hợp `ProcessTreeMemoryMonitor` |
 | **Tuần 1 - P1** | `bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu` | Schema DDL & Test chất lượng dữ liệu nguồn | `pytest bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/test_data_quality.py -v` |
 | **Tuần 1 - P2** | `bai_tuan1_y1_hssv_dung_bhyt/p2_bronze_silver` | Pipeline Bronze & Làm sạch Silver (5 quy tắc) | `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver` |
-| **Tuần 1 - P3** | `bai_tuan1_y1_hssv_dung_bhyt/p3_gold` | Pipeline Gold danh sách cá nhân và thống kê tỉnh | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold` |
-| **Tuần 1 - P4** | `bai_tuan1_y1_hssv_dung_bhyt/p4_giai_phap_a_b` | Thực thi pipeline Bạn A (PyArrow) & Bạn B (DuckDB) | `python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_a.pipeline_dev_a`<br>`python -m bai_tuan1_y1_hssv_dung_bhyt.p4_giai_phap_a_b.dev_b.pipeline_dev_b` |
-| **Tuần 1 - P5** | `bai_tuan1_y1_hssv_dung_bhyt/p5_doi_soat` | Đối chiếu chéo A vs B vs Kịch bản kỳ vọng SCENARIO | `python -m bai_tuan1_y1_hssv_dung_bhyt.p5_doi_soat.compare_results` |
+| **Tuần 1 - P3** | `bai_tuan1_y1_hssv_dung_bhyt/p3_gold` | Pipeline Gold danh sách cá nhân và thống kê tỉnh | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global` |
+| **Tuần 1 - P4** | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat` | Đối soát độc lập với file bạn cùng làm & SQL audit | `python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results` |
 
 ---
 
 ## 3. Thứ tự Chạy Bài Tuần 1 Ý 1 (Quick Start)
 
-### Chạy tự động trọn gói:
+### Cách 1: Chạy tự động trọn gói bằng file Batch
 ```powershell
 .\bai_tuan1_y1_hssv_dung_bhyt\chay_tat_ca.bat
 ```
+
+### Cách 2: Chạy lần lượt từng phần (Chuẩn Module `python -m`)
+1. **Làm sạch tầng Silver:**
+   ```powershell
+   python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver
+   ```
+2. **Xây dựng tầng Gold:**
+   ```powershell
+   python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global
+   ```
+3. **Đối soát chéo với file của bạn cùng làm:**
+   *(Đặt file `bc_hssv_dung_tham_gia.parquet` vào `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/ket_qua_cua_ban/`)*
+   ```powershell
+   python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results
+   ```
 
 ### Chạy kiểm thử tự động toàn diện (42/42 tests):
 ```powershell
 pytest -v
 ```
-Toàn bộ 42 bài kiểm thử (bao gồm test chất lượng dữ liệu P1, 5 ca quy tắc dòng bẩn P2, 20 ca kiểm thử biên logic P3 và 15 ca bất biến tầng Gold) đều được tự động phát hiện và thực thi thành công.
+Toàn bộ 42 bài kiểm thử (bao gồm 2 test chất lượng dữ liệu P1, 5 ca quy tắc dòng bẩn P2, 20 ca kiểm thử biên logic P3 và 15 ca bất biến tầng Gold) đều được tự động phát hiện và thực thi thành công.

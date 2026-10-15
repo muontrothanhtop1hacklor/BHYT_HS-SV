@@ -37,6 +37,13 @@ OUTPUT_DEV_A_DIR = OUTPUT_DIR / "dev_a"
 OUTPUT_DEV_B_DIR = OUTPUT_DIR / "dev_b"
 RECONCILIATION_DIR = OUTPUT_DIR / "reconciliation"
 
+# Đường dẫn kết quả tầng Gold và kết quả đối soát trao đổi
+GOLD_RESULT_DIR = OUTPUT_DIR / "gold" / "20241001_20260801_any"
+GOLD_BC_FILE = GOLD_RESULT_DIR / "bc_hssv_dung_tham_gia.parquet"
+GOLD_TK_CSV = GOLD_RESULT_DIR / "tk_dbhc_hssv_dung_tham_gia.csv"
+KET_QUA_CUA_BAN_DIR = PROJECT_ROOT / "bai_tuan1_y1_hssv_dung_bhyt" / "p4_doi_soat" / "ket_qua_cua_ban"
+
+
 # Đường dẫn bộ đáp án tham chiếu (Ground Truth)
 ANSWER_DIR = DATA_DIR / "bhyt_answer"
 ANSWER_LIST_FILE = ANSWER_DIR / "answer_list.parquet"
