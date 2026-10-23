@@ -63,7 +63,7 @@ gantt
     Gap đợt 2 (61 ngày tháng 11-12/2025) :crit, r2, 2025-11-01, 2025-12-31
 ```
 
-1. **Thẻ nối tiếp liên tục ($T_{\text{mới}} = D_{\text{cũ}} + 1\text{ ngày}$):**
+1. **Thẻ nối tiếp liên tục ($T_{\text{mới}} = D_{\text{cũ}} + 1$ ngày):**
    - Khoảng trống bằng 0 ngày. Thuật toán gộp thành một đoạn liên tục duy nhất $[T_{\text{cũ}}, D_{\text{mới}}]$.
 2. **Thẻ chồng lấn ($T_{\text{mới}} \le D_{\text{cũ}}$):**
    - Gộp thành $[T_{\text{cũ}}, \max(D_{\text{cũ}}, D_{\text{mới}})]$. Khoảng trống bằng 0 ngày.
@@ -71,7 +71,7 @@ gantt
    - Loại bỏ khỏi chuỗi thời gian hợp lệ, quyền lợi được đại diện bởi thẻ thay thế (có `TRANG_THAI = 1`).
 4. **Gián đoạn rải rác cộng dồn:**
    - Người tham gia có nhiều khoảng trống ngắn (ví dụ hè nghỉ 1 tháng, cuối năm nghỉ 2 tháng). Thuật toán cộng dồn toàn bộ:
-     $$\Delta_{\text{total}} = \sum \text{gap\_days}_i \ge 90\text{ ngày} \implies \text{Thỏa mãn điều kiện!}$$
+     $$\Delta_{\text{total}} = \sum \text{gap}_i \ge 90 \text{ ngày} \implies \text{Thỏa mãn điều kiện!}$$
 
 ---
 

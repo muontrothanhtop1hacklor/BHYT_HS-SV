@@ -37,12 +37,12 @@ flowchart TD
 1. **Điều kiện mốc bắt đầu (Tháng 10/2024):**
    - Tại tháng 10/2024, người đó đang tham gia BHYT với tư cách là **Học sinh (`HS`)** hoặc **Sinh viên (`SV`)**.
    - Nghĩa là: Có ít nhất một thẻ BHYT hợp lệ (`TRANG_THAI = 1`), `MA_KHOI IN ('HS', 'SV')`, có khoảng hiệu lực giao với tháng 10/2024:
-     $$\text{TU\_NGAY} < \text{2024-11-01} \quad \text{VÀ} \quad \text{DEN\_NGAY} \ge \text{2024-10-01}$$
+     > `TU_NGAY < '2024-11-01'` **VÀ** `DEN_NGAY >= '2024-10-01'`
 
 2. **Điều kiện mốc kết thúc (Tháng 07/2026):**
    - Tại tháng 07/2026, người đó **vẫn đang tham gia BHYT** (có thẻ hợp lệ thuộc bất kỳ khối đối tượng nào trong hệ thống, ví dụ: `HS`, `SV`, `DN`, `GD`, `TE`, `HT`...).
    - Nghĩa là: Có ít nhất một thẻ BHYT hợp lệ (`TRANG_THAI = 1`), có khoảng hiệu lực giao với tháng 07/2026:
-     $$\text{TU\_NGAY} < \text{2026-08-01} \quad \text{VÀ} \quad \text{DEN\_NGAY} \ge \text{2026-07-01}$$
+     > `TU_NGAY < '2026-08-01'` **VÀ** `DEN_NGAY >= '2026-07-01'`
 
 3. **Điều kiện tiến trình ở giữa (Từ 10/2024 đến 07/2026):**
    - Trong khoảng thời gian giữa 2 mốc trên, người đó có **tổng thời gian gián đoạn không tham gia BHYT cộng dồn từ 3 tháng trở lên**.

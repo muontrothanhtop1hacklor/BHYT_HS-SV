@@ -9,8 +9,8 @@ $$\mathcal{C} = \{ c_1, c_2, \dots, c_k \}$$
 Mỗi thẻ $c_i$ đặc trưng bởi một khoảng đóng có hiệu lực:
 $$I_i = [T_i, D_i] \quad \text{với } T_i \le D_i$$
 Trong đó:
-- $T_i = \text{TU\_NGAY}$ (ngày bắt đầu hiệu lực).
-- $D_i = \text{DEN\_NGAY}$ (ngày hết hạn thẻ).
+- $T_i =$ `TU_NGAY` (ngày bắt đầu hiệu lực).
+- $D_i =$ `DEN_NGAY` (ngày hết hạn thẻ).
 
 Cửa sổ quan sát theo công văn:
 $$W = [W_{\text{start}}, W_{\text{end}}] = [\text{2024-10-01}, \text{2026-07-31}]$$

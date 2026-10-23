@@ -31,10 +31,10 @@ Mục tiêu là tìm kiếm và báo cáo các trường hợp:
 3. **Kỳ tính gián đoạn (01/10/2024–31/07/2026, tính cả hai đầu):** Tổng số ngày không có thẻ hợp lệ cộng dồn đạt ít nhất 90 ngày; bao gồm ngày trống trước thẻ đầu và sau thẻ cuối.
 
 ### 2.2. Xử lý chuỗi thời gian (Timeline & Gaps)
-- **Thẻ liên tục:** Thẻ mới có hiệu lực ngay sau thẻ cũ hết hạn ($T_{\text{mới}} = D_{\text{cũ}} + 1\text{ ngày}$) $\implies$ Không có gián đoạn.
+- **Thẻ liên tục:** Thẻ mới có hiệu lực ngay sau thẻ cũ hết hạn ($T_{\text{mới}} = D_{\text{cũ}} + 1$ ngày) $\implies$ Không có gián đoạn.
 - **Thẻ chồng lấn/cấp đổi:** Khoảng thời hạn gối đầu nhau $\implies$ Tham gia liên tục.
 - **Thẻ bị hủy (`TRANG_THAI = 0`):** Loại trừ khỏi chuỗi thời gian hợp lệ.
-- **Tính cộng dồn:** Các khoảng trống đầu kỳ, giữa các đoạn và cuối kỳ được cộng dồn. Nếu $\sum \text{gap\_days} \ge 90\text{ ngày}$ thì đưa vào kết quả.
+- **Tính cộng dồn:** Các khoảng trống đầu kỳ, giữa các đoạn và cuối kỳ được cộng dồn. Nếu tổng số ngày trống $\sum \text{gap}_i \ge 90$ ngày (`sum(gap_days) >= 90`) thì đưa vào kết quả.
 
 ---
 
