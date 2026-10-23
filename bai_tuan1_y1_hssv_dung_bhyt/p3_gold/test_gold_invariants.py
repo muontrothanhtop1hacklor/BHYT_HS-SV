@@ -85,7 +85,8 @@ class TestGoldInvariantsOnActualOutput:
     """Kiểm tra bất biến dữ liệu trên file Gold thực tế đã xuất ra."""
 
     @pytest.fixture(scope="class")
-    def gold_data(self):
+    @classmethod
+    def gold_data(cls):
         gold_dir = "data/output/gold/20241001_20260801_any"
         bc_path = os.path.join(gold_dir, "bc_hssv_dung_tham_gia.parquet")
         tk_path = os.path.join(gold_dir, "tk_dbhc_hssv_dung_tham_gia.csv")

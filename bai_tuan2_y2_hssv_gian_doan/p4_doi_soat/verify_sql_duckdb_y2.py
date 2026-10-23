@@ -14,6 +14,10 @@ if sys.stdout.encoding != "utf-8":
     except Exception:
         pass
 
+ROOT_DIR = str(Path(__file__).resolve().parents[2])
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import duckdb
 import pandas as pd
 import pyarrow.parquet as pq
