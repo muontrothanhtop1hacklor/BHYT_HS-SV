@@ -1,5 +1,7 @@
 # BÁO CÁO NGHIỆM THU TÁI CẤU TRÚC REPO 200M: BỎ "BẠN A / BẠN B" VÀ TỔ CHỨC THEO BÀI / PHẦN
 
+> Báo cáo lịch sử của lần tái cấu trúc trước. Tài liệu hiện hành nằm ở README gốc và README của từng phần.
+
 **Trạng thái nghiệm thu:** **HOÀN THÀNH** (Đạt đầy đủ các tiêu chí C1, C2, C3)  
 **Thời gian hoàn tất:** 15/10/2026  
 **Điểm quay lại an toàn (Rollback Point):** Git Tag & Branch `backup-truoc-tai-cau-truc-bo-ab` (tại commit `e0aad6d`).

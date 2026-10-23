@@ -1,102 +1,80 @@
-# DỰ ÁN XỬ LÝ DỮ LIỆU BHYT 200 TRIỆU DÒNG (CV 835/QLT)
+# BHYT 200M — CV 835/QLT (Ý 1 & Ý 2)
 
-Dự án nghiên cứu và xử lý dữ liệu lớn Bảo hiểm Y tế (BHYT) quy mô **200 triệu dòng thẻ** (~20 triệu người).
-Repo được tổ chức theo kiến trúc **BÀI HỌC / PHẦN THỰC THI** (Lesson / Component-based) phục vụ việc mở rộng nhiều bài toán độc lập nhưng dùng chung tài nguyên.
+Dự án xử lý dữ liệu BHYT quy mô lớn (200 triệu dòng thẻ, 20 triệu người tham gia) theo Công văn số 835/QLT ngày 10/08/2026 của BHXH Việt Nam:
+- **Tuần 1 (Ý 1):** Rà soát học sinh, sinh viên tham gia tháng 10/2024 nhưng đến tháng 08/2026 đã dừng tham gia và chưa tham gia lại.
+- **Tuần 2 (Ý 2):** Rà soát học sinh, sinh viên tham gia tháng 10/2024, đến tháng 07/2026 vẫn đang tham gia nhưng có thời gian gián đoạn không tham gia từ 3 tháng trở lên (≥ 90 ngày).
 
-> **Bối cảnh phát triển:**
-> Repo này lưu trữ giải pháp độc lập của tôi theo mô hình kiến trúc Medallion (**Bronze -> Silver -> Gold**) và bộ công cụ đối soát chéo độc lập với file kết quả nhận từ máy của bạn cùng làm (`ket_qua_cua_ban`).
+## Bắt đầu tại đây
 
----
+1. Đọc yêu cầu nghiệp vụ: [Tuần 1 (Ý 1)](docs/requirements/yeu_cau_tuan1_hssv_dung_bhyt.md) | [Tuần 2 (Ý 2)](docs/requirements/yeu_cau_tuan2_hssv_gian_doan.md).
+2. Xem hướng dẫn thực thi: [Tuần 1 (Ý 1)](bai_tuan1_y1_hssv_dung_bhyt/README.md) | [Tuần 2 (Ý 2)](bai_tuan2_y2_hssv_gian_doan/README.md).
+3. Xem [sơ đồ thư mục dữ liệu](docs/data-layout.md) để biết dữ liệu đầu vào, trung gian và kết quả nằm ở đâu.
+4. Tra cứu [mục lục báo cáo](bai_tuan1_y1_hssv_dung_bhyt/bao_cao/README.md) hoặc [hướng dẫn sinh dữ liệu](common/data_gen/README.md).
 
-## 1. Cấu trúc Tổng quan Dự án (Project Architecture)
+## Cấu trúc repo
 
 ```text
 200m/
-├── README.md                                  # Hướng dẫn tổng thể: bài nào ở đâu, thứ tự chạy
-├── requirements.txt                           # Các thư viện phụ thuộc (Python 3.14+, PyArrow, DuckDB...)
-├── .agents/                                   # Cấu hình AI Pair Programming Agents
-├── common/                                    # TÀI NGUYÊN DÙNG CHUNG CHO NHIỀU BÀI
-│   ├── config.py                              # Cấu hình mốc thời gian CV 835 và đường dẫn data
-│   └── data_gen/                              # Bộ công cụ sinh và xác thực dữ liệu giả lập
-│       ├── gen_bhyt.py                        # Script 2: Numba + Vòng đời 20M người (~200M dòng thẻ)
-│       ├── gen_bhyt_script1.py                # Script 1: Vòng đời H1-H10 (SplitMix64 + SCENARIO)
-│       ├── validate_bhyt.py                   # Xác thực toàn vẹn & xuất đáp án chuẩn Ground Truth
-│       ├── chay_sinh_du_lieu.bat              # Batch chạy sinh dữ liệu (hỗ trợ cả Script 1 & 2)
-│       └── legacy/                            # Mã nguồn sinh dữ liệu sơ khai (lưu trữ lịch sử)
-│           ├── generate_dm_bhxh.py
-│           ├── generate_st_inthe_dtl.py
-│           └── lifecycle.py
-└── bai_tuan1_y1_hssv_dung_bhyt/               # BÀI TOÁN TUẦN 1 - Ý 1: RÀ SOÁT HSSV DỪNG BHYT (CV 835/QLT)
-    ├── README.md                              # Tóm tắt đề bài, định nghĩa nghiệp vụ & thứ tự chạy
-    ├── chay_tat_ca.bat                        # Script batch chạy tự động toàn bộ workflow Tuần 1
-    ├── p1_du_lieu/                            # PHẦN 1: Khám phá dữ liệu thô
-    │   ├── ddl_dm_bhxh.sql, ddl_st_inthe_dtl.sql
-    │   ├── test_data_quality.py               # Kiểm tra schema dữ liệu thô
-    │   ├── ke_hoach_chuyen_cau_truc.md        # Kế hoạch tái cấu trúc repo
-    │   ├── bao_cao_chuyen_cau_truc.md         # Báo cáo nghiệm thu tái cấu trúc
-    │   └── bao_cao_ngay1.md                   # Báo cáo Ngày 1
-    ├── p2_bronze_silver/                      # PHẦN 2: Medallion Bronze & Silver
-    │   ├── build_bronze.py, build_silver.py   # Ingestion Bronze & Cleaning Silver
-    │   ├── phan_tich_131_nguoi.py             # Phân tích định lượng chênh lệch dữ liệu bẩn
-    │   ├── test_quy_tac_dong_ban.py           # Bộ test 5 ca quy tắc dòng bẩn
-    │   └── dac_ta_nghiep_vu.md, bao_cao_ngay2.md
-    ├── p3_gold/                               # PHẦN 3: Tầng Báo cáo Gold
-    │   ├── gold_logic.py                      # Nghiệp vụ lõi giao tháng, dừng tham gia, ưu tiên khối
-    │   ├── build_gold.py                      # Pipeline tổng hợp danh sách cá nhân & 63 tỉnh
-    │   ├── ddl_output_tables.sql              # DDL bảng kết quả Gold
-    │   ├── test_edge_cases.py                 # Bộ test 20 ca biên logic tham gia/dừng
-    │   ├── test_gold_invariants.py            # Bộ test 15 ca bất biến số liệu Gold
-    │   └── plan_ngay3.md, bao_cao_ngay3.md
-    └── p4_doi_soat/                           # PHẦN 4: Đối soát & Kiểm chứng Độc lập
-        ├── compare_results.py                 # So file kết quả của Tôi với file của Bạn cùng làm
-        ├── verify_sql_duckdb.py               # Kiểm chứng độc lập bằng SQL thuần DuckDB
-        ├── sql/                               # Các câu truy vấn SQL chuẩn tắc
-        │   ├── query_y1_cte_window.sql        # Truy vấn CTE + Window Function
-        │   └── query_y1_left_join.sql         # Truy vấn Left Join IS NULL
-        ├── ket_qua_cua_ban/                   # Thư mục đặt file kết quả nhận từ bạn cùng làm
-        │   └── README.md
-        ├── dinh_dang_trao_doi.md              # Đặc tả quy cách file kết quả trao đổi
-        └── chay_doi_soat.bat                  # Batch chạy đối soát tự động
+├── README.md                         # Điểm bắt đầu và bản đồ repo
+├── AGENTS.md                         # Quy ước làm việc với dữ liệu BHYT
+├── requirements.txt                  # Thư viện Python
+├── .agents/rules/                    # Hướng dẫn chuyên biệt cho agent
+├── docs/
+│   ├── data-layout.md                # Quy ước các thư mục dữ liệu
+│   ├── architecture/                 # Kế hoạch và báo cáo lịch sử
+│   └── requirements/                 # Đề bài Tuần 1 và Tuần 2
+├── common/
+│   ├── config.py                     # Cấu hình đường dẫn và mốc nghiệp vụ
+│   └── data_gen/                     # Sinh dữ liệu, kiểm tra và xuất đáp án
+├── bai_tuan1_y1_hssv_dung_bhyt/      # Tuần 1 (Ý 1: HSSV dừng tham gia BHYT)
+│   ├── README.md                     # Hướng dẫn bài toán Ý 1
+│   ├── chay_tat_ca.bat               # Kịch bản chạy toàn bộ Ý 1
+│   ├── p1_du_lieu/                   # DDL và kiểm tra dữ liệu nguồn
+│   ├── p2_bronze_silver/             # Nạp Bronze và làm sạch Silver
+│   ├── p3_gold/                      # Pipeline tổng hợp tầng Gold Ý 1
+│   └── p4_doi_soat/                  # Đối soát và kiểm chứng DuckDB SQL
+└── bai_tuan2_y2_hssv_gian_doan/      # Tuần 2 (Ý 2: HSSV gián đoạn BHYT >= 3 tháng)
+    ├── README.md                     # Hướng dẫn bài toán Ý 2
+    ├── chay_tat_ca.bat               # Kịch bản chạy toàn bộ Ý 2
+    ├── p1_du_lieu/                   # DDL bảng chi tiết & thống kê Ý 2
+    ├── p2_thuat_toan_timeline/       # Thiết kế giải thuật chuỗi thời gian & Gaps
+    ├── p3_gold/                      # Pipeline sản xuất tầng Gold Ý 2 & Tests
+    └── p4_doi_soat/                  # Đối soát độc lập và kiểm chứng SQL
 ```
 
----
+Thư mục `data/` chứa dữ liệu sinh ra và dữ liệu trung gian; các tệp dữ liệu lớn được loại khỏi Git. Xem [docs/data-layout.md](docs/data-layout.md).
 
-## 2. Bảng Phân bố các Bài học và Chức năng
+## Sinh dữ liệu
 
-| Bài học / Module | Thư mục | Mục đích / Chức năng chính | Lệnh thực thi chính |
-|:---|:---|:---|:---|
-| **Dùng chung** | `common/data_gen` | Sinh dữ liệu giả lập quy mô lớn và xuất đáp án chuẩn | `.\common\data_gen\chay_sinh_du_lieu.bat` |
-| **Tuần 1 - P1** | `bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu` | Schema DDL & Test chất lượng dữ liệu nguồn | `pytest bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/test_data_quality.py -v` |
-| **Tuần 1 - P2** | `bai_tuan1_y1_hssv_dung_bhyt/p2_bronze_silver` | Pipeline Bronze & Làm sạch Silver (5 quy tắc) | `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver` |
-| **Tuần 1 - P3** | `bai_tuan1_y1_hssv_dung_bhyt/p3_gold` | Pipeline Gold danh sách cá nhân và thống kê tỉnh | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global` |
-| **Tuần 1 - P4** | `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat` | Đối soát độc lập với file bạn cùng làm & SQL audit | `python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results` |
+Chạy thử với 200.000 người:
 
----
-
-## 3. Thứ tự Chạy Bài Tuần 1 Ý 1 (Quick Start)
-
-### Cách 1: Chạy tự động trọn gói bằng file Batch
 ```powershell
-.\bai_tuan1_y1_hssv_dung_bhyt\chay_tat_ca.bat
+python common/data_gen/gen_bhyt.py generate --out data/bhyt_data --persons 200000 --chunk-persons 50000 --workers 4
 ```
 
-### Cách 2: Chạy lần lượt từng phần (Chuẩn Module `python -m`)
-1. **Làm sạch tầng Silver:**
-   ```powershell
-   python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver
-   ```
-2. **Xây dựng tầng Gold:**
-   ```powershell
-   python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global
-   ```
-3. **Đối soát chéo với file của bạn cùng làm:**
-   *(Đặt file `bc_hssv_dung_tham_gia.parquet` vào `bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/ket_qua_cua_ban/`)*
-   ```powershell
-   python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results
-   ```
+Sinh quy mô đầy đủ (20 triệu người, khoảng 200 triệu dòng thẻ):
 
-### Chạy kiểm thử tự động toàn diện (42/42 tests):
+```powershell
+python common/data_gen/gen_bhyt.py generate --out data/bhyt_data --persons 20000000 --chunk-persons 100000 --workers 4
+```
+
+Hướng dẫn chi tiết và lệnh xác thực ở [common/data_gen/README.md](common/data_gen/README.md).
+
+## Các phần xử lý
+
+| Phần | Vai trò | Hướng dẫn |
+|---|---|---|
+| P1 — Dữ liệu | DDL và kiểm tra dữ liệu nguồn | [p1_du_lieu](bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/README.md) |
+| P2 — Bronze/Silver | Nạp dữ liệu, khử trùng, chuẩn hóa và cách ly lỗi | [p2_bronze_silver](bai_tuan1_y1_hssv_dung_bhyt/p2_bronze_silver/README.md) |
+| P3 — Gold | Tính danh sách HSSV dừng tham gia và thống kê tỉnh | [p3_gold](bai_tuan1_y1_hssv_dung_bhyt/p3_gold/README.md) |
+| P4 — Đối soát | So sánh kết quả và kiểm chứng bằng DuckDB SQL | [p4_doi_soat](bai_tuan1_y1_hssv_dung_bhyt/p4_doi_soat/README.md) |
+
+## Kiểm tra
+
+Chạy toàn bộ kiểm thử từ thư mục gốc:
+
 ```powershell
 pytest -v
 ```
-Toàn bộ 42 bài kiểm thử (bao gồm 2 test chất lượng dữ liệu P1, 5 ca quy tắc dòng bẩn P2, 20 ca kiểm thử biên logic P3 và 15 ca bất biến tầng Gold) đều được tự động phát hiện và thực thi thành công.
+
+Báo cáo Ngày 5 ghi nhận 44 kiểm thử đã đạt ở thời điểm nghiệm thu; xem [báo cáo](bai_tuan1_y1_hssv_dung_bhyt/bao_cao/bao_cao_ngay5.md).

@@ -25,7 +25,7 @@
 - Docker không chạy; DuckDB chưa được cài.
 
 ### 2.3. DDL
-Đã soạn trong [sql/ddl/](../sql/ddl/):
+DDL nguồn được lưu tại [ddl_dm_bhxh.sql](../p1_du_lieu/ddl_dm_bhxh.sql) và [ddl_st_inthe_dtl.sql](../p1_du_lieu/ddl_st_inthe_dtl.sql):
 - `DM_BHXH`, `ST_INTHE_DTL`
 - `BC_HSSV_DUNG_THAM_GIA` (chi tiết), `TK_DBHC_HSSV_DUNG_THAM_GIA` (tổng hợp theo tỉnh)
 

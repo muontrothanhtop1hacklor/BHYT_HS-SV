@@ -37,12 +37,17 @@ OUTPUT_DEV_A_DIR = OUTPUT_DIR / "dev_a"
 OUTPUT_DEV_B_DIR = OUTPUT_DIR / "dev_b"
 RECONCILIATION_DIR = OUTPUT_DIR / "reconciliation"
 
-# Đường dẫn kết quả tầng Gold và kết quả đối soát trao đổi
+# Đường dẫn kết quả tầng Gold và kết quả đối soát trao đổi (Tuần 1 - Ý 1)
 GOLD_RESULT_DIR = OUTPUT_DIR / "gold" / "20241001_20260801_any"
 GOLD_BC_FILE = GOLD_RESULT_DIR / "bc_hssv_dung_tham_gia.parquet"
 GOLD_TK_CSV = GOLD_RESULT_DIR / "tk_dbhc_hssv_dung_tham_gia.csv"
 KET_QUA_CUA_BAN_DIR = PROJECT_ROOT / "bai_tuan1_y1_hssv_dung_bhyt" / "p4_doi_soat" / "ket_qua_cua_ban"
 
+# Đường dẫn kết quả tầng Gold và kết quả đối soát trao đổi (Tuần 2 - Ý 2)
+GOLD_Y2_RESULT_DIR = OUTPUT_DIR / "gold_y2" / "20241001_20260731_gap3m"
+GOLD_Y2_BC_FILE = GOLD_Y2_RESULT_DIR / "bc_hssv_gian_doan_bhyt.parquet"
+GOLD_Y2_TK_CSV = GOLD_Y2_RESULT_DIR / "tk_dbhc_hssv_gian_doan_bhyt.csv"
+KET_QUA_CUA_BAN_Y2_DIR = PROJECT_ROOT / "bai_tuan2_y2_hssv_gian_doan" / "p4_doi_soat" / "ket_qua_cua_ban"
 
 # Đường dẫn bộ đáp án tham chiếu (Ground Truth)
 ANSWER_DIR = DATA_DIR / "bhyt_answer"
@@ -54,9 +59,17 @@ ANSWER_BY_TINH_FILE = ANSWER_DIR / "answer_by_tinh.csv"
 NGAY_DAU_THANG_GOC = date(2024, 10, 1)
 NGAY_DAU_THANG_SAU_GOC = date(2024, 11, 1)
 
-# Mốc kiểm tra "đến nay" (T08/2026): giao tháng 08/2026 nghĩa là TU_NGAY < 2026-09-01 và DEN_NGAY >= 2026-08-01
+# Mốc kiểm tra Ý 1 "đến nay" (T08/2026): giao tháng 08/2026
 NGAY_DAU_THANG_KIEM_TRA = date(2026, 8, 1)
 NGAY_DAU_THANG_SAU_KIEM_TRA = date(2026, 9, 1)
+
+# Mốc kiểm tra Ý 2 (T07/2026): giao tháng 07/2026
+NGAY_DAU_THANG_KIEM_TRA_Y2 = date(2026, 7, 1)
+NGAY_DAU_THANG_SAU_KIEM_TRA_Y2 = date(2026, 8, 1)
+NGAY_CUOI_THANG_KIEM_TRA_Y2 = date(2026, 7, 31)
+
+# Ngưỡng thời gian gián đoạn Ý 2 (>= 3 tháng quy đổi = 90 ngày)
+MIN_GAP_DAYS_Y2 = 90
 
 # Ngày ký công văn 835/QLT (dùng hiển thị báo cáo chi tiết)
 NGAY_KIEM_TRA = date(2026, 8, 10)

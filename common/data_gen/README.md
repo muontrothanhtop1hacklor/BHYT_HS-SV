@@ -1,6 +1,25 @@
 # common/data_gen: Sinh và kiểm tra dữ liệu BHYT giả lập (CV 835/QLT)
-- **Mục đích**: Cung cấp công cụ sinh dữ liệu BHYT chuẩn quy mô lớn theo vòng đời người (Script 1 SplitMix64 & Script 2 Numba).
-- **Đầu vào**: Các tham số dòng lệnh (`--persons`, `--chunk`, `--seed`, `--workers`).
-- **Đầu ra**: `data/bhyt_data` (`DM_BHXH.csv/.parquet`, `ST_INTHE_DTL/*.parquet`, `SCENARIO/*.parquet`).
-- **Cách chạy**: Chạy trực tiếp `common\data_gen\chay_sinh_du_lieu.bat` hoặc lệnh `python common/data_gen/gen_bhyt_script1.py --persons 200000 --chunk 100000 --out data/bhyt_data`.
-- **Test kiểm tra**: Chạy `python common/data_gen/validate_bhyt.py --data data/bhyt_data --export data/bhyt_answer` để xác thực toàn vẹn dữ liệu.
+
+## 1. Mục đích
+Cung cấp công cụ sinh dữ liệu BHYT giả lập quy mô lớn (200 triệu dòng thẻ cho 20 triệu người tham gia) theo mô hình vòng đời đối tượng (Person Lifecycle) tối ưu hóa với Numba JIT song song đa tiến trình.
+
+## 2. Cấu trúc tệp
+- `gen_bhyt.py`: Bộ sinh dữ liệu chính (hỗ trợ các lệnh `generate`, `calibrate`, `bench`).
+- `validate_bhyt.py`: Bộ kiểm tra toàn vẹn dữ liệu, kiểm tra 12 quy tắc nghiệp vụ thẻ và xuất đáp án tham chiếu.
+- `chay_sinh_du_lieu.bat`: Kịch bản chạy nhanh trên môi trường Windows.
+
+## 3. Hướng dẫn sử dụng
+
+### Sinh dữ liệu:
+```powershell
+# Chạy sinh dữ liệu mẫu 200.000 người (~2 triệu dòng thẻ)
+python common/data_gen/gen_bhyt.py generate --out data/bhyt_data --persons 200000 --chunk-persons 50000 --workers 4
+
+# Chạy sinh toàn phần 20.000.000 người (~200 triệu dòng thẻ)
+python common/data_gen/gen_bhyt.py generate --out data/bhyt_data --persons 20000000 --chunk-persons 100000 --workers 4
+```
+
+### Kiểm tra toàn vẹn và xuất đáp án chuẩn:
+```powershell
+python common/data_gen/validate_bhyt.py --data data/bhyt_data --export data/bhyt_answer
+```

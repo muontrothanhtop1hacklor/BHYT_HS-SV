@@ -1,7 +1,18 @@
-# Bài Tuần 1 - Ý 1: Rà soát HSSV dừng tham gia BHYT (CV 835/QLT)
+# Tuần 1 — Ý 1: Rà soát HSSV dừng tham gia BHYT
 
-## 1. Tóm tắt Đề bài & Nghiệp vụ
-Thực hiện công văn 835/QLT ngày 10/08/2026 của Ban Quản lý Thu - Sổ, Thẻ (BHXH Việt Nam) về việc rà soát học sinh, sinh viên (HSSV) tham gia BHYT nhưng đến nay đã dừng tham gia.
+Bài toán thực hiện theo CV 835/QLT. Mục tiêu là tìm người có thẻ khối Học sinh (`HS`) hoặc Sinh viên (`SV`) giao tháng 10/2024 nhưng không có thẻ ở bất kỳ khối nào giao tháng 08/2026.
+
+## Bắt đầu nhanh
+
+1. Đảm bảo dữ liệu nguồn đã có trong `data/bhyt_data/` hoặc `data/source/`.
+2. Tạo tầng Bronze bằng `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_bronze`.
+3. Trên Windows, chạy `.\bai_tuan1_y1_hssv_dung_bhyt\chay_tat_ca.bat` để xử lý Silver, Gold và đối soát.
+4. Xem [báo cáo nghiệm thu](bao_cao/README.md) để tra cứu lịch sử kết quả.
+
+## Quy tắc nghiệp vụ
+
+Đề bài đầy đủ ở [docs/requirements/yeu_cau_tuan1_hssv_dung_bhyt.md](../docs/requirements/yeu_cau_tuan1_hssv_dung_bhyt.md). Tóm tắt:
+
 - **Mốc gốc (T10/2024):** Có tham gia BHYT thuộc khối Học sinh (`HS`) hoặc Sinh viên (`SV`).
 - **Mốc kiểm tra "đến nay" (T08/2026):** Không còn tham gia BHYT ở bất kỳ đối tượng/khối nào.
 
@@ -20,21 +31,21 @@ Một thẻ BHYT được xác định là có giá trị sử dụng trong thá
 
 ---
 
-## 2. Bảng cơ cấu các phần của bài toán
+## Các phần xử lý
 
 | Phần | Tên thư mục | Chức năng chính | Đầu ra chính | Lệnh chạy |
 |:---|:---|:---|:---|:---|
 | **Phần 1** | `p1_du_lieu` | DDL bảng thô và kiểm tra chất lượng dữ liệu nguồn | Schema validation, Báo cáo Ngày 1 | `pytest bai_tuan1_y1_hssv_dung_bhyt/p1_du_lieu/test_data_quality.py -v` |
-| **Phần 2** | `p2_bronze_silver` | Kiến trúc Medallion Bronze (nạp thô) & Silver (làm sạch 5 loại lỗi) | `data/bronze/`, `data/silver/`, `quarantine/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_bronze`<br>`python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver` |
+| **Phần 2** | `p2_bronze_silver` | Nạp Bronze, chuẩn hóa Silver, khử trùng toàn cục và cách ly lỗi | `data/bronze/`, `data/silver/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_bronze`<br>`python -m bai_tuan1_y1_hssv_dung_bhyt.p2_bronze_silver.build_silver` |
 | **Phần 3** | `p3_gold` | Pipeline tổng hợp báo cáo Gold danh sách & thống kê 63 tỉnh | `data/output/gold/` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p3_gold.build_gold --method global` |
 | **Phần 4** | `p4_doi_soat` | Đối soát độc lập với file bạn cùng làm & kiểm chứng DuckDB SQL | Báo cáo đối soát `reconciliation_report.md` | `python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results` |
 
 ---
 
-## 3. Thứ tự thực thi toàn bộ bài toán
+## Luồng thực thi
 
-### Cách 1: Chạy tự động toàn bộ bằng file Batch
-Chạy file [chay_tat_ca.bat](file:///c:/Users/Administrator/200m/bai_tuan1_y1_hssv_dung_bhyt/chay_tat_ca.bat):
+### Cách 1: Chạy Silver, Gold và đối soát bằng Batch
+Sau khi đã sinh dữ liệu nguồn và xây dựng Bronze, chạy từ thư mục gốc repo:
 ```powershell
 .\bai_tuan1_y1_hssv_dung_bhyt\chay_tat_ca.bat
 ```
@@ -57,7 +68,7 @@ Chạy file [chay_tat_ca.bat](file:///c:/Users/Administrator/200m/bai_tuan1_y1_h
    ```powershell
    python -m bai_tuan1_y1_hssv_dung_bhyt.p4_doi_soat.compare_results
    ```
-5. **Chạy toàn bộ bộ kiểm thử đơn vị & biên (42 tests):**
+5. **Chạy toàn bộ bộ kiểm thử:**
    ```powershell
    pytest -v
    ```

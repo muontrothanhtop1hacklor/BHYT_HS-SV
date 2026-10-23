@@ -1,5 +1,7 @@
 # KẾ HOẠCH TÁI CẤU TRÚC REPO 200M THEO BÀI / PHẦN VÀ BỎ "BẠN A / BẠN B" (GIAI ĐOẠN A)
 
+> Tài liệu lịch sử ghi lại kế hoạch và trạng thái trước đợt tái cấu trúc. Dùng README gốc làm hướng dẫn hiện hành; các đường dẫn và số liệu trong tài liệu này phản ánh thời điểm lập kế hoạch.
+
 ## 1. Điểm quay lại an toàn (Rollback Point)
 - **Git Tag đã tạo:** `backup-truoc-tai-cau-truc-bo-ab`
 - **Git Branch dự phòng:** `backup-truoc-tai-cau-truc-bo-ab`
