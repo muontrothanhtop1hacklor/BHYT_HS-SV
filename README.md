@@ -3,11 +3,12 @@
 Dự án xử lý dữ liệu BHYT quy mô lớn (200 triệu dòng thẻ, 20 triệu người tham gia) theo Công văn số 835/QLT ngày 10/08/2026 của BHXH Việt Nam:
 - **Tuần 1 (Ý 1):** Rà soát học sinh, sinh viên tham gia tháng 10/2024 nhưng đến tháng 08/2026 đã dừng tham gia và chưa tham gia lại.
 - **Tuần 2 (Ý 2):** Rà soát học sinh, sinh viên tham gia tháng 10/2024, đến tháng 07/2026 vẫn đang tham gia nhưng có thời gian gián đoạn không tham gia từ 3 tháng trở lên (≥ 90 ngày).
+- **Tuần 3 (Thiết kế Hệ thống & API):** Thiết kế cơ bản (Basic Design) và Thiết kế chi tiết (Detail Design) cho hệ thống xử lý 200M dòng thẻ BHYT và cổng dịch vụ 6 RESTful APIs tra cứu, thống kê 63 tỉnh và xuất báo cáo.
 
 ## Bắt đầu tại đây
 
-1. Đọc yêu cầu nghiệp vụ: [Tuần 1 (Ý 1)](docs/requirements/yeu_cau_tuan1_hssv_dung_bhyt.md) | [Tuần 2 (Ý 2)](docs/requirements/yeu_cau_tuan2_hssv_gian_doan.md).
-2. Xem hướng dẫn thực thi: [Tuần 1 (Ý 1)](bai_tuan1_y1_hssv_dung_bhyt/README.md) | [Tuần 2 (Ý 2)](bai_tuan2_y2_hssv_gian_doan/README.md).
+1. Đọc yêu cầu nghiệp vụ: [Tuần 1 (Ý 1)](docs/requirements/yeu_cau_tuan1_hssv_dung_bhyt.md) | [Tuần 2 (Ý 2)](docs/requirements/yeu_cau_tuan2_hssv_gian_doan.md) | [Tuần 3 (Thiết kế & API)](docs/requirements/yeu_cau_tuan3_thiet_ke_he_thong_api.md).
+2. Xem hướng dẫn thực thi & thiết kế: [Tuần 1 (Ý 1)](bai_tuan1_y1_hssv_dung_bhyt/README.md) | [Tuần 2 (Ý 2)](bai_tuan2_y2_hssv_gian_doan/README.md) | [Tuần 3 (Basic & Detail Design)](design/README.md).
 3. Xem [sơ đồ thư mục dữ liệu](docs/data-layout.md) để biết dữ liệu đầu vào, trung gian và kết quả nằm ở đâu.
 4. Tra cứu [mục lục báo cáo](bai_tuan1_y1_hssv_dung_bhyt/bao_cao/README.md) hoặc [hướng dẫn sinh dữ liệu](common/data_gen/README.md).
 
@@ -22,7 +23,7 @@ Dự án xử lý dữ liệu BHYT quy mô lớn (200 triệu dòng thẻ, 20 tr
 ├── docs/
 │   ├── data-layout.md                # Quy ước các thư mục dữ liệu
 │   ├── architecture/                 # Kế hoạch và báo cáo lịch sử
-│   └── requirements/                 # Đề bài Tuần 1 và Tuần 2
+│   └── requirements/                 # Đề bài Tuần 1, Tuần 2 và Tuần 3
 ├── common/
 │   ├── config.py                     # Cấu hình đường dẫn và mốc nghiệp vụ
 │   └── data_gen/                     # Sinh dữ liệu, kiểm tra và xuất đáp án
@@ -33,13 +34,19 @@ Dự án xử lý dữ liệu BHYT quy mô lớn (200 triệu dòng thẻ, 20 tr
 │   ├── p2_bronze_silver/             # Nạp Bronze và làm sạch Silver
 │   ├── p3_gold/                      # Pipeline tổng hợp tầng Gold Ý 1
 │   └── p4_doi_soat/                  # Đối soát và kiểm chứng DuckDB SQL
-└── bai_tuan2_y2_hssv_gian_doan/      # Tuần 2 (Ý 2: HSSV gián đoạn BHYT >= 3 tháng)
-    ├── README.md                     # Hướng dẫn bài toán Ý 2
-    ├── chay_tat_ca.bat               # Kịch bản chạy toàn bộ Ý 2
-    ├── p1_du_lieu/                   # DDL bảng chi tiết & thống kê Ý 2
-    ├── p2_thuat_toan_timeline/       # Thiết kế giải thuật chuỗi thời gian & Gaps
-    ├── p3_gold/                      # Pipeline sản xuất tầng Gold Ý 2 & Tests
-    └── p4_doi_soat/                  # Đối soát độc lập và kiểm chứng SQL
+├── bai_tuan2_y2_hssv_gian_doan/      # Tuần 2 (Ý 2: HSSV gián đoạn BHYT >= 3 tháng)
+│   ├── README.md                     # Hướng dẫn bài toán Ý 2
+│   ├── chay_tat_ca.bat               # Kịch bản chạy toàn bộ Ý 2
+│   ├── p1_du_lieu/                   # DDL bảng chi tiết & thống kê Ý 2
+│   ├── p2_thuat_toan_timeline/       # Thiết kế giải thuật chuỗi thời gian & Gaps
+│   ├── p3_gold/                      # Pipeline sản xuất tầng Gold Ý 2 & Tests
+│   └── p4_doi_soat/                  # Đối soát độc lập và kiểm chứng SQL
+└── design/                           # Tuần 3 (Thiết kế Hệ thống 200M dòng & 6 APIs)
+    ├── README.md                     # Tổng quan và bản đồ tài liệu thiết kế Tuần 3
+    ├── ThietKeCoBan_BasicDesign_VN.md     # Thiết kế cơ bản (Basic Design - Markdown)
+    ├── ThietKeCoBan_BasicDesign_VN.xlsx   # Thiết kế cơ bản (Basic Design - 15 sheets Excel)
+    ├── ThietKeChiTiet_DetailDesign_VN.md  # Thiết kế chi tiết (Detail Design - Markdown)
+    └── ThietKeChiTiet_DetailDesign_VN.xlsx# Thiết kế chi tiết (Detail Design - 11 sheets Excel)
 ```
 
 Thư mục `data/` chứa dữ liệu sinh ra và dữ liệu trung gian; các tệp dữ liệu lớn được loại khỏi Git. Xem [docs/data-layout.md](docs/data-layout.md).
