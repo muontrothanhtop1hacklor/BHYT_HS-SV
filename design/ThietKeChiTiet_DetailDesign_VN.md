@@ -433,7 +433,7 @@ HAVING COALESCE(SUM(gap_days), 0) >= 90;
 |---|---|
 | **Tham số bind** | `None (Chạy theo Batch trên thư mục Parquet)` |
 | **Index sử dụng** | `Phân vùng Parquet theo Chunk/Tỉnh` |
-| **Số dòng kỳ vọng** | `~241.869 người HSSV gián đoạn >= 90 ngày (từ ~5M HSSV)` |
+| **Số dòng kỳ vọng** | `~242.290 người HSSV gián đoạn >= 90 ngày (từ ~5M HSSV)` |
 | **Có dữ liệu** | Lọc TONG_NGAY_GIAN_DOAN >= 90 -> Ghi vào Gold Parquet |
 | **Không có (NOT FOUND)** | 0 dòng thỏa mãn -> Cảnh báo dữ liệu nguồn trống |
 | **Nhiều hơn kỳ vọng** | Không áp dụng |

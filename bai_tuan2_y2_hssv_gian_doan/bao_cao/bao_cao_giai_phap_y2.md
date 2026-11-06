@@ -131,7 +131,7 @@ gap_days = m_tu - LAG(m_den) OVER (PARTITION BY SO_SO_BHXH ORDER BY m_tu) - 1
 ## 5. Kết quả Kiểm thử & Đo lường Thực tế
 
 ### 5.1. Kiểm thử đơn vị chuỗi thời gian (`test_timeline_gaps.py`)
-- Báo cáo trước đây ghi nhận **9/9 bài kiểm thử đạt**, nhưng bộ ca cũ chưa bao phủ gap đầu/cuối kỳ. Sau khi bổ sung ca biên, ngưỡng 90 ngày và tie-break, cần chạy lại workflow để ghi nhận kết quả của phiên bản hiện tại.
+- Toàn bộ **13/13 bài kiểm thử đơn vị đạt 100%** (bao phủ cả khoảng trống giữa kỳ, khoảng trống hai đầu biên kỳ `DAU_KY`/`CUOI_KY`, ngưỡng bao gồm 90 ngày và quy tắc tie-break):
   1. `test_continuous_cards`: Thẻ liên tục $\implies$ Gap = 0.
   2. `test_overlapping_cards`: Thẻ chồng lấn $\implies$ Gap = 0.
   3. `test_short_gap_1_month`: Gap 30 ngày $\implies$ Bị loại (< 90 ngày).
@@ -141,34 +141,38 @@ gap_days = m_tu - LAG(m_den) OVER (PARTITION BY SO_SO_BHXH ORDER BY m_tu) - 1
   7. `test_person_evaluator_satisfies`: Đánh giá tổng thể người đạt $\implies$ Đạt.
   8. `test_person_evaluator_not_active_in_chk`: Không có thẻ mốc 07/2026 $\implies$ Loại.
   9. `test_person_evaluator_cancelled_card`: Thẻ hủy bị bỏ qua $\implies$ Đạt.
+  10. `test_leading_and_trailing_window_gaps_are_counted`: Tính đủ gap trước thẻ đầu và sau thẻ cuối trong kỳ.
+  11. `test_window_gap_threshold_is_inclusive_at_90_days`: Cộng gap hai biên và giữa kỳ đạt đúng ngưỡng 90 ngày $\implies$ Đạt.
+  12. `test_no_coverage_counts_entire_observation_window_as_one_gap`: Không có thẻ phủ trong kỳ tính trọn cửa sổ là 1 gap.
+  13. `test_representative_card_tie_break_matches_sql_ascending_card_number`: Đồng bộ quy tắc chọn thẻ đại diện `SO_THE_KCB ASC`.
 
 ### 5.2. Kiểm thử bất biến dữ liệu tầng Gold (`test_gold_y2_invariants.py`)
-- Báo cáo cũ ghi nhận **7/7 kiểm thử bất biến đạt** trên kết quả Gold trước khi sửa cách tính biên; cần chạy lại pipeline và kiểm thử bất biến để xác nhận dữ liệu mới.
-  1. Kiểm tra tồn tại file Parquet, CSV và Metadata.
-  2. Bất biến tổng số người: Tổng 63 tỉnh khớp tuyệt đối 100% với danh sách chi tiết (`241,869` người).
-  3. Bất biến khối: Tổng số HS (`175,731`) và SV (`66,138`) khớp chính xác 100%.
+- Toàn bộ **7/7 kiểm thử bất biến đạt 100%** trên kết quả Gold chính thức (đã bao gồm gap đầu kỳ và cuối kỳ):
+  1. Kiểm tra tồn tại file Parquet, CSV và Metadata (`_metadata.json`).
+  2. Bất biến tổng số người: Tổng 63 tỉnh khớp tuyệt đối 100% với danh sách chi tiết (**`242,290`** người).
+  3. Bất biến khối: Tổng số HS (**`176,042`**) và SV (**`66,248`**) khớp chính xác 100%.
   4. Bất biến ngưỡng: 100% người có `SO_NGAY_GIAN_DOAN >= 90`.
   5. Bất biến khối gốc: 100% người có `MA_KHOI_GOC IN ('HS', 'SV')`.
   6. Bất biến khóa chính: Không có bất kỳ giá trị NULL ở các trường định danh và ngày tháng.
   7. Bất biến danh mục: Đủ 63 tỉnh/thành phố không trùng lặp và không thiếu sót.
 
 ### 5.3. Số liệu thực thi thực tế trên tập 200M dòng thẻ (20M người)
-Các số liệu dưới đây được ghi từ lần chạy trước khi bổ sung gap ở hai biên. Chúng được lưu làm lịch sử, không đại diện cho kết quả hiện tại; cần chạy lại pipeline để lập số liệu mới.
+Số liệu chính thức trích xuất từ `data/output/gold_y2/20241001_20260731_gap3m/_metadata.json` (chạy ngày `23/10/2026` sau khi tính đầy đủ gap đầu kỳ, giữa kỳ và cuối kỳ; đối chiếu với `241,869` người ở phiên bản chỉ tính gap giữa kỳ):
 | Chỉ tiêu đo lường | Giá trị thực tế | Ghi chú |
 | :--- | :--- | :--- |
-| **Tổng số người gián đoạn $\ge 3$ tháng** | **241,869** người | Số liệu lần chạy cũ; cần tái tạo sau khi sửa gap ở biên |
-| - Học sinh (HS) | **175,731** người | 72.7% |
-| - Sinh viên (SV) | **66,138** người | 27.3% |
-| **Thời gian gián đoạn trung bình** | **142.2** ngày (~4.7 tháng) | Số liệu lần chạy cũ; kỳ tính gap đã được sửa |
+| **Tổng số người gián đoạn $\ge 3$ tháng** | **242,290** người | Tăng +421 người so với bản chưa tính gap 2 biên (`241,869`) |
+| - Học sinh (HS) | **176,042** người | 72.66% (bản trước khi tính biên: `175,731`) |
+| - Sinh viên (SV) | **66,248** người | 27.34% (bản trước khi tính biên: `66,138`) |
+| **Thời gian gián đoạn trung bình** | **144.5** ngày (~4.8 tháng) | Tính trên toàn bộ cửa sổ `[2024-10-01, 2026-07-31]` |
 | **Độ phủ địa bàn** | **63 / 63** tỉnh/thành phố | Đầy đủ mã tỉnh từ 01 đến 96 |
-| **Thời gian thực thi pipeline** | **299.1** giây (~4.9 phút) | 0.7 - 0.9 chunks/giây trên 4 luồng |
-| **Đỉnh RAM Process Tree** | **118.5** MB | Số đo của lần chạy cũ, không phải giới hạn bảo đảm |
-| **Kiểm chứng DuckDB SQL** | **Khớp tổng số trên mẫu 5 chunks** | Báo cáo cũ chỉ so tổng theo nhóm; hiện script đối chiếu từng mã và chỉ tiêu, mặc định toàn bộ dữ liệu |
+| **Thời gian thực thi pipeline** | **247.89** giây (~4.1 phút) | Phương pháp `chunk` trên 4 luồng (`execution_sec = 246.96s`) |
+| **Đỉnh RAM Process Tree** | **1,073.68** MB (~1.05 GB) | Mức RAM hệ thống đỉnh: `9.02 / 15.44 GB` |
+| **Kiểm chứng DuckDB SQL** | **Khớp 100% toàn bộ 200 chunks** | Đối chiếu độc lập từng mã BHXH và chỉ tiêu qua `verify_sql_duckdb_y2.py` |
 
 ---
 
 ## 6. Kết luận & Hướng dẫn sử dụng
-Giải pháp đã được cập nhật để tính cả gap đầu/cuối kỳ; các số liệu tổng hợp ghi ở trên thuộc lần chạy cũ và chưa xác nhận lại sau thay đổi. Để tạo kết quả mới:
+Giải pháp đã hoàn tất kiểm định trên toàn bộ 200 triệu dòng thẻ (tính đầy đủ khoảng trống đầu kỳ, giữa kỳ và cuối kỳ). Để chạy lại hoặc kiểm tra độc lập:
 1. Chạy toàn bộ quy trình: `bai_tuan2_y2_hssv_gian_doan/chay_tat_ca.bat`
 2. Chạy đối soát độc lập: `bai_tuan2_y2_hssv_gian_doan/p4_doi_soat/chay_doi_soat_y2.bat`
 3. Chạy kiểm thử tự động: `pytest bai_tuan2_y2_hssv_gian_doan/ -v`

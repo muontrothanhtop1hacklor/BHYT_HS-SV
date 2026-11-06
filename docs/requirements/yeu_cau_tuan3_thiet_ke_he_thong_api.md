@@ -93,3 +93,4 @@ Toàn bộ sản phẩm thiết kế của Tuần 3 được đặt tại thư m
 2. **Thiết kế chi tiết (Detail Design – Mã tài liệu `HSSV-DD-001`):**
    - File Excel: [`design/ThietKeChiTiet_DetailDesign_VN.xlsx`](../../design/ThietKeChiTiet_DetailDesign_VN.xlsx) (11 sheets: `00_HuongDan` $\rightarrow$ `10_QA`).
    - File Markdown: [`design/ThietKeChiTiet_DetailDesign_VN.md`](../../design/ThietKeChiTiet_DetailDesign_VN.md).
+
